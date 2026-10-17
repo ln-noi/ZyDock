@@ -228,18 +228,7 @@ public partial class App : Application
     private void ShowTrayMenu()
     {
         NativeMethods.GetCursorPos(out var pt);
-        var items = new List<PopupMenuItem>
-        {
-            new("打开设置", ShowSettings),
-            new("自动隐藏 Dock", () => ToggleSetting(s => s.AutoHideEnabled = !s.AutoHideEnabled), Settings.AutoHideEnabled),
-            new("隐藏 Windows 任务栏", () => ToggleSetting(s => s.HideSystemTaskbar = !s.HideSystemTaskbar), Settings.HideSystemTaskbar),
-            new("开机启动", () => ToggleSetting(s => s.AutoStartEnabled = !s.AutoStartEnabled), Settings.AutoStartEnabled),
-            PopupMenuItem.Separator,
-            new("重新载入配置", ReloadSettings),
-            new("退出 ZyDock", ExitApp),
-        };
-
-        PopupMenuWindow.ShowAt(new Point(pt.X, pt.Y), items);
+        PopupMenuWindow.ShowAt(new Point(pt.X, pt.Y), BuildMainMenu());
     }
 
     private void OnItemContextRequested(DockItem item, Point dockPoint)
@@ -252,8 +241,8 @@ public partial class App : Application
                 new("打开", () => _launcher.Launch(item)),
                 new("在资源管理器中显示", () => RevealInExplorer(item)),
                 PopupMenuItem.Separator,
-                new("从 Dock 移除", () => RemoveItem(item)),
                 new("编辑设置…", ShowSettings),
+                new("从 Dock 移除", () => RemoveItem(item), IsChecked: false, IsSeparator: false, IsDanger: true),
             };
 
             PopupMenuWindow.ShowAt(screenPoint, items);
@@ -328,28 +317,43 @@ public partial class App : Application
         }
     }
 
-    /// <summary>Right click on the empty part of the capsule: dock menu with the settings entry.</summary>
+    /// <summary>Right click on the empty part of the capsule: the main dock menu.</summary>
     private void OnDockContextRequested(Point screenPoint)
     {
         try
         {
-            var items = new List<PopupMenuItem>
-            {
-                new("打开设置…", ShowSettings),
-                PopupMenuItem.Separator,
-                new("自动隐藏 Dock", () => ToggleSetting(s => s.AutoHideEnabled = !s.AutoHideEnabled), Settings.AutoHideEnabled),
-                new("隐藏 Windows 任务栏", () => ToggleSetting(s => s.HideSystemTaskbar = !s.HideSystemTaskbar), Settings.HideSystemTaskbar),
-                new("开机启动", () => ToggleSetting(s => s.AutoStartEnabled = !s.AutoStartEnabled), Settings.AutoStartEnabled),
-                PopupMenuItem.Separator,
-                new("退出 ZyDock", ExitApp, IsChecked: false, IsSeparator: false, IsDanger: true),
-            };
-
+            var items = BuildMainMenu();
             PopupMenuWindow.ShowAt(screenPoint, items);
         }
         catch (Exception ex)
         {
             Log.Warn("显示 Dock 右键菜单失败。", ex);
         }
+    }
+
+    /// <summary>
+    /// Shared menu used by the dock capsule and the tray icon: actions first, then the behaviour
+    /// toggles with their current state, then maintenance, then the destructive exit.
+    /// </summary>
+    private List<PopupMenuItem> BuildMainMenu()
+    {
+        return
+        [
+            new("打开设置…", ShowSettings),
+            PopupMenuItem.Separator,
+            new("自动隐藏 Dock", () => ToggleSetting(s => s.AutoHideEnabled = !s.AutoHideEnabled), Settings.AutoHideEnabled),
+            new("最大化时自动隐藏", () => ToggleSetting(s => s.HideOnFullscreen = !s.HideOnFullscreen), Settings.HideOnFullscreen),
+            new("图标拖影", () => ToggleSetting(s => s.IconReflection = !s.IconReflection), Settings.IconReflection),
+            PopupMenuItem.Separator,
+            new("隐藏 Windows 任务栏", () => ToggleSetting(s => s.HideSystemTaskbar = !s.HideSystemTaskbar), Settings.HideSystemTaskbar),
+            new("开机启动", () => ToggleSetting(s => s.AutoStartEnabled = !s.AutoStartEnabled), Settings.AutoStartEnabled),
+            PopupMenuItem.Separator,
+            new("刷新图标", RefreshIcons),
+            new("打开配置文件夹", OpenDataFolder),
+            new("打开日志文件夹", OpenLogFolder),
+            PopupMenuItem.Separator,
+            new("退出 ZyDock", ExitApp, IsChecked: false, IsSeparator: false, IsDanger: true),
+        ];
     }
 
     private void RevealInExplorer(DockItem item)
@@ -397,6 +401,51 @@ public partial class App : Application
         _dock?.ApplySettings(settings, rebuildItems: true);
         _settingsWindow?.ReloadFromSettings(settings);
         _dock?.ShowToast("配置已重新载入。");
+    }
+
+    /// <summary>Drops the icon cache and re-reads every icon from the shell.</summary>
+    private void RefreshIcons()
+    {
+        try
+        {
+            _icons.Clear();
+            _dock?.ApplySettings(Settings, rebuildItems: true);
+            _dock?.ShowToast("图标已刷新。");
+        }
+        catch (Exception ex)
+        {
+            Log.Warn("刷新图标失败。", ex);
+        }
+    }
+
+    /// <summary>Opens the folder that holds settings.json (and the logs live one level up in LocalAppData).</summary>
+    private void OpenDataFolder()
+    {
+        try
+        {
+            var folder = ZyDock.Core.AppPaths.DataDirectory;
+            Directory.CreateDirectory(folder);
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("explorer.exe", $"\"{folder}\"") { UseShellExecute = true });
+        }
+        catch (Exception ex)
+        {
+            Log.Warn("打开配置文件夹失败。", ex);
+        }
+    }
+
+    /// <summary>Opens the folder that keeps app.log, so a bug report can attach it.</summary>
+    private void OpenLogFolder()
+    {
+        try
+        {
+            var folder = ZyDock.Core.AppPaths.LogDirectory;
+            Directory.CreateDirectory(folder);
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("explorer.exe", $"\"{folder}\"") { UseShellExecute = true });
+        }
+        catch (Exception ex)
+        {
+            Log.Warn("打开日志文件夹失败。", ex);
+        }
     }
 
     #endregion

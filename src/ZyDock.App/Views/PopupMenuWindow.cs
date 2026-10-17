@@ -67,6 +67,7 @@ internal sealed class PopupMenuWindow : Window
         try
         {
             var window = new PopupMenuWindow(items);
+            window._shownAt = DateTime.UtcNow;
             window.Show();
             window.UpdateLayout();
             window.Activate();
@@ -102,6 +103,7 @@ internal sealed class PopupMenuWindow : Window
     }
 
     private bool _closing;
+    private DateTime _shownAt;
 
     protected override void OnKeyDown(KeyEventArgs e)
     {

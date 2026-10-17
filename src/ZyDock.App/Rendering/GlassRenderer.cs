@@ -108,12 +108,12 @@ internal static class GlassRenderer
                 StartPoint = new Point(0.5, 0),
                 EndPoint = new Point(0.5, 1),
             };
-            sheen.GradientStops.Add(new GradientStop(Color.FromArgb(16, 255, 255, 255), 0));
+            sheen.GradientStops.Add(new GradientStop(Color.FromArgb(13, 255, 255, 255), 0));
             sheen.GradientStops.Add(new GradientStop(Color.FromArgb(0, 255, 255, 255), 1));
             plate.Children.Add(new Rectangle
             {
                 Fill = sheen,
-                Height = Math.Max(4, plateHeight * 0.26),
+                Height = Math.Max(3, plateHeight * 0.11),
                 VerticalAlignment = VerticalAlignment.Top,
             });
 
@@ -128,7 +128,7 @@ internal static class GlassRenderer
             plate.Children.Add(new Rectangle
             {
                 Fill = innerShade,
-                Height = Math.Max(2, plateHeight * 0.075),
+                Height = Math.Max(1.5, plateHeight * 0.035),
                 VerticalAlignment = VerticalAlignment.Top,
             });
 
@@ -138,12 +138,12 @@ internal static class GlassRenderer
                 StartPoint = new Point(0.5, 1),
                 EndPoint = new Point(0.5, 0),
             };
-            floorLight.GradientStops.Add(new GradientStop(Color.FromArgb(16, 255, 255, 255), 0));
+            floorLight.GradientStops.Add(new GradientStop(Color.FromArgb(13, 255, 255, 255), 0));
             floorLight.GradientStops.Add(new GradientStop(Color.FromArgb(0, 255, 255, 255), 1));
             plate.Children.Add(new Rectangle
             {
                 Fill = floorLight,
-                Height = Math.Max(3, plateHeight * 0.14),
+                Height = Math.Max(2, plateHeight * 0.055),
                 VerticalAlignment = VerticalAlignment.Bottom,
             });
 
