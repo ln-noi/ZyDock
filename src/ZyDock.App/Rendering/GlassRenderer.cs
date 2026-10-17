@@ -147,22 +147,31 @@ internal static class GlassRenderer
                 VerticalAlignment = VerticalAlignment.Bottom,
             });
 
-            // Specular line: the single sharpest detail of the whole surface.
-            var specularInset = Math.Max(6, radius * 0.55);
+            // Specular line: the single sharpest detail of the whole surface. Only a short centre
+            // segment, like the highlight a curved glass rim actually catches - a full-width line
+            // reads as a drawn border rather than a reflection.
+            var specularWidth = Math.Clamp(plateWidth * 0.22, 24, 260);
+            var specularLeft = (plateWidth - specularWidth) / 2;
+
+            var specularFill = new LinearGradientBrush
+            {
+                StartPoint = new Point(0, 0),
+                EndPoint = new Point(1, 0),
+            };
+            specularFill.GradientStops.Add(new GradientStop(Color.FromArgb(0, 255, 255, 255), 0));
+            specularFill.GradientStops.Add(new GradientStop(Color.FromArgb(130, 255, 255, 255), 0.5));
+            specularFill.GradientStops.Add(new GradientStop(Color.FromArgb(0, 255, 255, 255), 1));
+
             var specular = new Rectangle
             {
                 Height = Math.Max(0.8, 0.85 * scale),
-                Width = Math.Max(8, plateWidth - specularInset * 2),
+                Width = specularWidth,
                 RadiusX = 0.5 * scale,
                 RadiusY = 0.5 * scale,
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Top,
-                Margin = new Thickness(specularInset, Math.Max(1.0, 1.1 * scale), 0, 0),
-                Fill = new LinearGradientBrush(
-                    Color.FromArgb(0, 255, 255, 255),
-                    Color.FromArgb(150, 255, 255, 255),
-                    new Point(0, 0),
-                    new Point(1, 0)),
+                Margin = new Thickness(specularLeft, Math.Max(1.0, 1.1 * scale), 0, 0),
+                Fill = specularFill,
                 Opacity = 0.7,
             };
             plate.Children.Add(specular);
