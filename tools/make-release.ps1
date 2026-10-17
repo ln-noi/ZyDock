@@ -21,10 +21,14 @@ New-Item -ItemType Directory -Force -Path $release | Out-Null
 Get-ChildItem $release -File | Remove-Item -Force
 
 # asset name -> source file
+# Names are deliberately explicit so the two packaging forms are never confused:
+#   ZyDock-<ver>-single-file.exe  : the portable single-file build (runtime inside the exe)
+#   ZyDock-<ver>-single-file.zip   : the same exe, zipped (for platforms that block .exe)
+#   ZyDock-<ver>-folder.zip        : the folder build (exe + ~239 runtime dlls next to it)
 $assets = @(
-    @{ Name = "ZyDock-$Version.exe";              Src = (Join-Path $dist "ZyDock-$Version-singlefile\ZyDock.exe") },
-    @{ Name = "ZyDock-$Version-singlefile.zip";   Src = (Join-Path $dist "ZyDock-$Version-singlefile.zip") },
-    @{ Name = "ZyDock-$Version.zip";              Src = (Join-Path $dist "ZyDock-$Version.zip") }
+    @{ Name = "ZyDock-$Version-single-file.exe"; Src = (Join-Path $dist "ZyDock-$Version-singlefile\ZyDock.exe") },
+    @{ Name = "ZyDock-$Version-single-file.zip"; Src = (Join-Path $dist "ZyDock-$Version-singlefile.zip") },
+    @{ Name = "ZyDock-$Version-folder.zip";      Src = (Join-Path $dist "ZyDock-$Version.zip") }
 )
 
 $missing = @()
@@ -44,7 +48,7 @@ if ($missing.Count -gt 0) {
     exit 1
 }
 
-$renameNote1 = "# A file name does not affect its digest: renaming ZyDock-$Version.exe to"
+$renameNote1 = "# A file name does not affect its digest: renaming ZyDock-$Version-single-file.exe to"
 $renameNote2 = '# ZyDock.exe keeps the same SHA-256 value.'
 
 $header = @(
@@ -88,7 +92,7 @@ Write-Host "SHA256SUMS.txt written to dist\release\ and to the repository root."
 Write-Host 'Paste this line into the GitHub release notes:'
 Write-Host ''
 foreach ($line in $body) {
-    if ($line -like "*ZyDock-$Version.exe*") {
-        Write-Host ("SHA-256 (ZyDock-$Version.exe): " + ($line -split '\s+')[0])
+    if ($line -like "*ZyDock-$Version-single-file.exe*") {
+        Write-Host ("SHA-256 (ZyDock-$Version-single-file.exe): " + ($line -split '\s+')[0])
     }
 }

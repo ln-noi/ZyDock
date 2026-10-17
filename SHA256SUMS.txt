@@ -9,11 +9,11 @@
 #   CMD        : certutil -hashfile <file> SHA256
 #   7-Zip      : right click -> CRC SHA -> SHA-256
 #
-# A file name does not affect its digest: renaming ZyDock-1.0.0.exe to
+# A file name does not affect its digest: renaming ZyDock-1.0.0-single-file.exe to
 # ZyDock.exe keeps the same SHA-256 value.
 #
 # Hashes prove the file matches this list; they do not prove authorship.
 # Only a signed artifact (code signing / attestation) proves who built it.
-3593a05a20166cf6e87c4d56f29258b0e11746cc60b8a3fec3193af6a9997ec9  ZyDock-1.0.0.exe
-b6384658f4d31e2a7f7ba16aae35abbee5a74922a4f1288c7209424ff43b6481  ZyDock-1.0.0-singlefile.zip
-3eab10245fa95bcb65c2c423671c6fe71bfb3651aceb53c244ad3b84b8762b0e  ZyDock-1.0.0.zip
+3593a05a20166cf6e87c4d56f29258b0e11746cc60b8a3fec3193af6a9997ec9  ZyDock-1.0.0-single-file.exe
+b6384658f4d31e2a7f7ba16aae35abbee5a74922a4f1288c7209424ff43b6481  ZyDock-1.0.0-single-file.zip
+3eab10245fa95bcb65c2c423671c6fe71bfb3651aceb53c244ad3b84b8762b0e  ZyDock-1.0.0-folder.zip

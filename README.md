@@ -59,18 +59,18 @@
 
 | 下载哪个文件 | 大小 | 说明 |
 | --- | --- | --- |
-| **`ZyDock-1.0.0.exe`** | 63 MB | **① 单文件版（推荐给普通用户）**：一个 exe 自带 .NET 运行时，放进任意目录双击即可。给朋友转发就发这一个文件 |
-| `ZyDock-1.0.0-singlefile.zip` | 58 MB | **② ① 的压缩包**：里面还是那一个 exe（外加 3 个文档），哈希与 ① 完全相同。某些平台不允许直接分发 `.exe` 时用 |
-| `ZyDock-1.0.0.zip` | 61 MB | **③ 目录版**：解压得到 247 个文件（exe + 你的代码 dll + 239 个运行时 dll），启动更快、不依赖 `%TEMP%`，适合自己长期使用 |
+| **`ZyDock-1.0.0-single-file.exe`** | 63 MB | **① 单文件版（推荐给普通用户）**：一个 exe 自带 .NET 运行时，放进任意目录双击即可。给朋友转发就发这一个文件 |
+| `ZyDock-1.0.0-single-file.zip` | 58 MB | **② ① 的压缩包**：里面还是那一个 exe（外加 3 个文档），哈希与 ① 完全相同。某些平台不允许直接分发 `.exe` 时用 |
+| `ZyDock-1.0.0-folder.zip` | 61 MB | **③ 目录版**：解压得到 247 个文件（exe + 你的代码 dll + 239 个运行时 dll），启动更快、不依赖 `%TEMP%`，适合自己长期使用 |
 | `SHA256SUMS.txt` | 1 KB | 上面三个文件的 SHA-256，下载后建议核对 |
 
 **① 和 ③ 是同一个程序的两种打包形态，不是两个版本**：① 把运行时压在 exe 里（首次启动解到 `%TEMP%`），③ 把运行时平铺在同一目录（所以必须是整个文件夹）。**② 只是 ① 的 zip**，内容一模一样。
 
 | 你的情况 | 下哪个 |
 | --- | --- |
-| 只想双击就用 / 要发给别人 | **① `ZyDock-1.0.0.exe`** |
-| 平台不允许传 exe（网盘、群文件审核） | ② `ZyDock-1.0.0-singlefile.zip` |
-| 想启动最快、不想依赖 `%TEMP%` | ③ `ZyDock-1.0.0.zip`（解压后整个文件夹一起用） |
+| 只想双击就用 / 要发给别人 | **① `ZyDock-1.0.0-single-file.exe`** |
+| 平台不允许传 exe（网盘、群文件审核） | ② `ZyDock-1.0.0-single-file.zip` |
+| 想启动最快、不想依赖 `%TEMP%` | ③ `ZyDock-1.0.0-folder.zip`（解压后整个文件夹一起用） |
 
 > 本仓库只放源码（约 1.5 MB）；程序体积大，全部走 **Releases** 下载，不占仓库。
 
@@ -108,9 +108,9 @@ powershell -ExecutionPolicy Bypass -File .\verify-download.ps1
 输出形如：
 
 ```
-OK       ZyDock-1.0.0.exe
-OK       ZyDock-1.0.0-singlefile.zip
-OK       ZyDock-1.0.0.zip
+OK       ZyDock-1.0.0-single-file.exe
+OK       ZyDock-1.0.0-single-file.zip
+OK       ZyDock-1.0.0-folder.zip
 
 Summary: 3 OK, 0 mismatch, 0 missing
 ```
@@ -118,10 +118,10 @@ Summary: 3 OK, 0 mismatch, 0 missing
 也可以手工核对：
 
 ```powershell
-Get-FileHash .\ZyDock-1.0.0.exe -Algorithm SHA256     # PowerShell
+Get-FileHash .\ZyDock-1.0.0-single-file.exe -Algorithm SHA256   # PowerShell
 ```
 ```cmd
-certutil -hashfile ZyDock-1.0.0.exe SHA256            :: CMD
+certutil -hashfile ZyDock-1.0.0-single-file.exe SHA256          :: CMD
 ```
 
 装了 7-Zip 的话：右键文件 → `CRC SHA` → `SHA-256`。

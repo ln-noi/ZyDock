@@ -112,6 +112,15 @@ node tools\fetch-packs.mjs .tools\nuget-local `
 | `dist\ZyDock-<ver>-singlefile.zip` | ≈58 MB | 单文件版分发包 |
 | `dist\optional\ZyDock-<ver>-needs-dotnet8-runtime\` | ≈0.4 MB | 框架依赖版（`-FrameworkDependent`，需目标机装 .NET 8 Desktop Runtime） |
 
+`tools\make-release.ps1` 会把上面三个产物整理成**上传用**的 `dist\release\`，并改成语义明确的发布资产名：
+
+| 发布资产名 | 来源 | 说明 |
+| --- | --- | --- |
+| `ZyDock-<ver>-single-file.exe` | `ZyDock-<ver>-singlefile\ZyDock.exe` | **单文件版**，运行时在 exe 内 |
+| `ZyDock-<ver>-single-file.zip` | `ZyDock-<ver>-singlefile.zip` | 上面那个 exe 的压缩包 |
+| `ZyDock-<ver>-folder.zip` | `ZyDock-<ver>.zip` | **目录版**，解压出 247 个文件 |
+| `SHA256SUMS.txt` | 自动生成 | 以上三个文件的哈希 |
+
 单文件版解压目录不可写时，可用环境变量 `DOTNET_BUNDLE_EXTRACT_BASE_DIR` 指定别处。
 
 > `dist\` 已在 `.gitignore` 中；发到 GitHub 时应作为 **Release Assets** 上传，而不是提交进仓库。
