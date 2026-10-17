@@ -9,6 +9,12 @@ artifacts/
 publish/
 dist/
 
+# ------------------------------------------- release binaries (use Releases!)
+# Never commit built executables / libraries: they belong to GitHub Releases.
+*.exe
+*.dll
+*.pdb
+
 # ------------------------------------------------------- local toolchain (SDK)
 # Downloaded .NET 8 SDK + NuGet cache used to build this repo offline.
 .tools/
