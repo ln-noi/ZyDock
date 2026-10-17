@@ -223,6 +223,7 @@ public partial class SettingsWindow : Window
 
         _settings.TintColor = DockSettings.NormalizeColor(hex);
         TintHexBox.Text = _settings.TintColor;
+        UpdateTintSwatchSelection();
         ScheduleApply();
     }
 
@@ -248,7 +249,24 @@ public partial class SettingsWindow : Window
 
         _settings.TintColor = normalized;
         TintHexBox.Text = normalized;
+        UpdateTintSwatchSelection();
         ScheduleApply();
+    }
+
+    /// <summary>Highlights the swatch that matches the current colour (accent ring).</summary>
+    private void UpdateTintSwatchSelection()
+    {
+        var accent = (Brush)FindResource("AccentBrush");
+        var idle = new SolidColorBrush(Color.FromArgb(0x40, 0xFF, 0xFF, 0xFF));
+        var current = _settings.TintColor;
+
+        foreach (var swatch in new[] { TintDark, TintGray, TintSilver, TintWhite, TintBlue, TintViolet })
+        {
+            var isActive = swatch.Tag is string hex &&
+                           string.Equals(hex, current, StringComparison.OrdinalIgnoreCase);
+            swatch.BorderBrush = isActive ? accent : idle;
+            swatch.BorderThickness = new Thickness(isActive ? 2 : 1);
+        }
     }
 
     private void ScheduleApply()
@@ -320,6 +338,7 @@ public partial class SettingsWindow : Window
             ShadowToggle.IsChecked = settings.ShadowEnabled;
             ReflectionToggle.IsChecked = settings.IconReflection;
             TintHexBox.Text = settings.TintColor;
+            UpdateTintSwatchSelection();
             FullscreenToggle.IsChecked = settings.HideOnFullscreen;
             HideTaskbarToggle.IsChecked = settings.HideSystemTaskbar;
             AutoStartToggle.IsChecked = settings.AutoStartEnabled;
