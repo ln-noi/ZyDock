@@ -66,12 +66,27 @@ internal sealed class PopupMenuWindow : Window
     {
         try
         {
-            var window = new PopupMenuWindow(items);
+            var window = new PopupMenuWindow(items)
+            {
+                WindowStartupLocation = WindowStartupLocation.Manual,
+
+                // Placed after the window has a real size; staying invisible until then avoids a
+                // one-frame flash in the top-left corner.
+                Opacity = 0,
+            };
+
             window._shownAt = DateTime.UtcNow;
+            window._anchor = screenPixels;
+
+            // SizeToContent can still resize the window after the first placement; re-clamp so it
+            // can never end up partially off-screen.
+            window.SizeChanged += (_, _) => window.ClampToScreen(window._anchor);
+
             window.Show();
             window.UpdateLayout();
-            window.Activate();
             window.ClampToScreen(screenPixels);
+            window.Activate();
+            window.Opacity = 1;
         }
         catch (Exception ex)
         {
@@ -105,6 +120,11 @@ internal sealed class PopupMenuWindow : Window
     private bool _closing;
     private DateTime _shownAt;
 
+    /// <summary>Anchor (physical px) to clamp against; kept so a late size change can re-place.</summary>
+    private Point _anchor;
+    private int _placedWidth;
+    private int _placedHeight;
+
     protected override void OnKeyDown(KeyEventArgs e)
     {
         base.OnKeyDown(e);
@@ -117,28 +137,62 @@ internal sealed class PopupMenuWindow : Window
     private void ClampToScreen(Point screenPixels)
     {
         var handle = new WindowInteropHelper(this).Handle;
-        var width = (int)Math.Ceiling(ActualWidth);
-        var height = (int)Math.Ceiling(ActualHeight);
+
+        // ActualWidth/ActualHeight can still be zero here (the window was just shown), which is
+        // exactly why a dock at the bottom of the screen used to get its menu pushed off-screen:
+        // the "is there room below?" test compared against a height of 0. Take the size from the
+        // real window rect instead.
+        if (!NativeMethods.GetWindowRect(handle, out var windowRect))
+        {
+            return;
+        }
+
+        var width = windowRect.Right - windowRect.Left;
+        var height = windowRect.Bottom - windowRect.Top;
+        if (width <= 0 || height <= 0)
+        {
+            return;
+        }
+
+        // Re-placing at the same size would loop through SizeChanged; only react to real changes.
+        if (width == _placedWidth && height == _placedHeight)
+        {
+            return;
+        }
+
+        _placedWidth = width;
+        _placedHeight = height;
 
         var screens = Displays.All();
         var screen = Displays.FromPoint((int)screenPixels.X, (int)screenPixels.Y, screens);
 
-        var x = (int)screenPixels.X;
-        var y = (int)screenPixels.Y;
+        var workLeft = screen.WorkLeft;
+        var workTop = screen.WorkTop;
+        var workRight = screen.WorkLeft + screen.WorkWidth;
+        var workBottom = screen.WorkTop + screen.WorkHeight;
 
-        // Open upwards when there is no room below the cursor.
-        if (y + height > screen.WorkTop + screen.WorkHeight)
+        var x = (int)Math.Round(screenPixels.X);
+        var y = (int)Math.Round(screenPixels.Y);
+
+        // Open above the cursor when the menu does not fit below it (the usual case for a dock).
+        if (y + height > workBottom - 4)
         {
-            y = screen.WorkTop + screen.WorkHeight - height - 6;
+            y -= height + 4;
         }
 
-        if (x + width > screen.WorkLeft + screen.WorkWidth)
+        if (x + width > workRight - 4)
         {
-            x = screen.WorkLeft + screen.WorkWidth - width - 6;
+            x = workRight - width - 4;
         }
 
-        x = Math.Max(screen.WorkLeft + 4, x);
-        y = Math.Max(screen.WorkTop + 4, y);
+        x = Math.Max(workLeft + 4, x);
+        y = Math.Max(workTop + 4, y);
+
+        // Still too tall for the work area: pin to the top so the first entries stay reachable.
+        if (y + height > workBottom - 4)
+        {
+            y = Math.Max(workTop + 4, workBottom - height - 4);
+        }
 
         NativeMethods.SetWindowPos(
             handle,
