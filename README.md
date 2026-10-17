@@ -53,21 +53,42 @@
 
 ## 🚀 快速开始
 
-### 方式 A：单文件版（最省事，推荐转发给别人）
+### 在哪下载
 
-`dist/ZyDock-1.0.0-singlefile/ZyDock.exe` —— 单个 **63 MB** exe，放进任意目录双击即可。
-首次启动会把原生库解压到 `%TEMP%\.net`（之后复用缓存）。
+**下载地址：<https://github.com/ln-noi/ZyDock/releases/latest>**
 
-### 方式 B：自包含目录版
+| 下载哪个文件 | 大小 | 说明 |
+| --- | --- | --- |
+| **`ZyDock-1.0.0.exe`** | 63 MB | **单文件版（推荐给普通用户）**：一个 exe 自带 .NET 运行时，放进任意目录双击即可。给朋友转发就发这一个文件 |
+| `ZyDock-1.0.0.zip` | 61 MB | 目录版：解压得到 247 个文件（内含运行时），启动更快、不依赖 `%TEMP%`，适合自己长期使用 |
+| `ZyDock-1.0.0-singlefile.zip` | 58 MB | 上面那个单文件 exe 的压缩包（某些平台不允许直接分发 exe 时用） |
+| `SHA256SUMS.txt` | 1 KB | 上面几个文件的 SHA-256，下载后建议核对 |
 
-`dist/ZyDock-1.0.0.zip`（≈61 MB）解压后得到 247 个文件（内含 .NET 8 运行时），双击 `ZyDock.exe`。
-**必须整个目录一起用**：`ZyDock.exe` 只是 174 KB 的启动宿主，真正的代码在同目录的 `ZyDock.dll` / `ZyDock.Core.dll` 里。
+> 本仓库只放源码（约 1.5 MB）；程序体积大，全部走 **Releases** 下载，不占仓库。
 
-> 未做代码签名，首次运行会出现 SmartScreen「Windows 已保护你的电脑」→「更多信息」→「仍要运行」。
+### 首次运行
+
+- **单文件版**：双击 → 首次会在 `%TEMP%\.net` 解出约 8 MB 原生库（2–5 秒）→ Dock 出现在屏幕底部
+- **目录版**：**必须整个文件夹一起用**；`ZyDock.exe` 只有约 174 KB，是启动宿主，真正的代码在同目录的 `ZyDock.dll` / `ZyDock.Core.dll` 里，单独拷走 exe 会"双击没反应"
+- 未做代码签名，首次运行会出现 SmartScreen「Windows 已保护你的电脑」→「更多信息」→「仍要运行」
+- 首次启动会自动创建配置（`%APPDATA%\ZyDock`）并按本机已装应用自动生成图标，不需要手动配置
+
+### 从源码构建
+
+```powershell
+# 编译（自动使用仓库内 .tools\dotnet 的 .NET 8 SDK，离线可编译）
+powershell -ExecutionPolicy Bypass -File build.ps1
+
+# 发布：自包含目录版 + zip；加 -SingleFile 同时产出单文件版
+powershell -ExecutionPolicy Bypass -File publish.ps1
+powershell -ExecutionPolicy Bypass -File publish.ps1 -SingleFile
+```
+
+环境搭建（含离线获取 SDK）见 **[docs/BUILD.md](docs/BUILD.md)**。
 
 #### 校验下载（推荐）
 
-仓库根目录的 **[SHA256SUMS.txt](SHA256SUMS.txt)** 记录了官方发布文件（`ZyDock-<ver>.exe` 与两个 zip）的 SHA-256，并且**随代码一起进版本库**，所以可以用 `git log -p SHA256SUMS.txt` 追溯它是什么时候、由哪次提交改的。
+仓库根目录的 **[SHA256SUMS.txt](SHA256SUMS.txt)** 记录了官方发布文件的 SHA-256，并且**随代码一起进版本库**，所以可以用 `git log -p SHA256SUMS.txt` 追溯它是什么时候、由哪次提交改的。
 
 把 `SHA256SUMS.txt` 和下载的文件放进同一目录，直接运行仓库里的校验脚本即可：
 
@@ -100,19 +121,7 @@ certutil -hashfile ZyDock-1.0.0.exe SHA256            :: CMD
 - **一致** → 文件和发布时完全相同
 - **不一致** → 下载损坏或被替换，**不要运行**，重新从官方地址下载
 
-> ⚠️ 哈希能证明「和你发布的那份是同一个文件」，**不能证明是谁做的** —— 那是代码签名 / 构建证明的事（本项目暂未签名）。所以请只从本仓库的 Releases 页面下载；从其它站点拿到的副本即使哈希对得上，也只能说明它和某个副本一致。
-### 从源码构建
-
-```powershell
-# 编译（自动使用仓库内 .tools\dotnet 的 .NET 8 SDK，离线可编译）
-powershell -ExecutionPolicy Bypass -File build.ps1
-
-# 发布：自包含目录版 + zip；加 -SingleFile 同时产出单文件版
-powershell -ExecutionPolicy Bypass -File publish.ps1
-powershell -ExecutionPolicy Bypass -File publish.ps1 -SingleFile
-```
-
-环境搭建（含离线获取 SDK）见 **[docs/BUILD.md](docs/BUILD.md)**。
+> ⚠️ 哈希能证明「和你发布的那份是同一个文件」，**不能证明是谁做的** —— 那是代码签名 / 构建证明的事（本项目暂未签名）。所以请只从 [Releases 页面](https://github.com/ln-noi/ZyDock/releases/latest) 下载；从其它站点拿到的副本即使哈希对得上，也只能说明它和某个副本一致。
 
 #### 维护者发布流程
 
