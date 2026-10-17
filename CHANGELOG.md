@@ -9,7 +9,7 @@
 
 | 项目 | 改动 |
 | --- | --- |
-| 日志脱敏 | 新增 `Log.Redact`，写盘前把当前用户目录（以及任何 `X:\Users\<账号>` 形式）替换为 `%USERPROFILE%`，异常堆栈同样处理。实测日志中 `C:\Users\ZL` 出现 **0** 次、`%USERPROFILE%` 出现 4 次 |
+| 日志脱敏 | 新增 `Log.Redact`，写盘前把当前用户目录（以及任何 `X:\Users\<账号>` 形式）替换为 `%USERPROFILE%`，异常堆栈同样处理。实测日志中真实用户目录路径出现 **0** 次、`%USERPROFILE%` 出现 4 次 |
 | 调试钩子 | `InputDebug` 改为编译期开关：只有 `DEBUG` 或显式定义 `ZYDOCK_AUTOMATION` 时才读取 `ZYDOCK_DEBUG_INPUT`；正式 Release 编译为常量 `false`，整个分支被 JIT 消除。实测向正式版窗口连续发送 `DebugDrop / DebugHover / DebugReorder / DebugClick` 四个消息 → 图标数 12→12 不变、日志无 `[input]` 记录 |
 | 拖动排序可靠性 | 改为**按下图标即 `CaptureMouse()`**（非激活分层窗口的隐式捕获不可靠），并新增 `OnLostMouseCapture`：被 Alt+Tab 抢走捕获时回滚预览，不留半拖拽状态。加固后的 Release 版用真实鼠标拖动验证：第 2 位拖到第 4 位并持久化 |
 
