@@ -40,7 +40,7 @@
 | 拖入桌面图标 | 把 exe / `.lnk` / 文件夹拖到 Dock 上，胶囊上方提示「松开即可添加到 Dock」，松手加入 | `AllowDrop` + `DragEnter/DragOver/DragLeave/Drop`；`DockItemFactory.FromPath` 识别类型；按 `Target` 去重；支持多选一次拖入；加入后立即写盘 |
 | Dock 内拖动排序 | 按住图标左右拖（> 5 px 才触发，单击仍是启动），拖动中图标跟随指针并放大 8%，其余图标实时让位，松手保存 | 自写拖动而非 OLE `DoDragDrop`（后者会开模态循环、打断动画）：`CaptureMouse` + 预览置换数组 + 松手提交 `ItemsReordered` |
 
-验证：拖入 `notepad.exe` 与 `Desktop` 文件夹 → 8 → 10 项并写盘；真实鼠标把第 1 个图标拖到第 4 位 → 顺序变为 `哔哩哔哩 > 微信 > Edge > QQ` 并持久化。
+验证：拖入 `notepad.exe` 与 `Desktop` 文件夹 → 8 → 10 项并写盘；真实鼠标把第 1 个图标拖到第 4 位 → 顺序按预期重排并持久化（已用真实鼠标事件验证）。
 
 ---
 
