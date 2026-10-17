@@ -332,25 +332,15 @@ public partial class App : Application
     }
 
     /// <summary>
-    /// Shared menu used by the dock capsule and the tray icon: actions first, then the behaviour
-    /// toggles with their current state, then maintenance, then the destructive exit.
+    /// The right-click menu (dock capsule and tray icon). Deliberately minimal: it only routes to
+    /// the settings window and quits. Every toggle lives in the settings window, so the menu does
+    /// not duplicate them as shortcuts.
     /// </summary>
     private List<PopupMenuItem> BuildMainMenu()
     {
         return
         [
             new("打开设置…", ShowSettings),
-            PopupMenuItem.Separator,
-            new("自动隐藏 Dock", () => ToggleSetting(s => s.AutoHideEnabled = !s.AutoHideEnabled), Settings.AutoHideEnabled),
-            new("最大化时自动隐藏", () => ToggleSetting(s => s.HideOnFullscreen = !s.HideOnFullscreen), Settings.HideOnFullscreen),
-            new("图标拖影", () => ToggleSetting(s => s.IconReflection = !s.IconReflection), Settings.IconReflection),
-            PopupMenuItem.Separator,
-            new("隐藏 Windows 任务栏", () => ToggleSetting(s => s.HideSystemTaskbar = !s.HideSystemTaskbar), Settings.HideSystemTaskbar),
-            new("开机启动", () => ToggleSetting(s => s.AutoStartEnabled = !s.AutoStartEnabled), Settings.AutoStartEnabled),
-            PopupMenuItem.Separator,
-            new("刷新图标", RefreshIcons),
-            new("打开配置文件夹", OpenDataFolder),
-            new("打开日志文件夹", OpenLogFolder),
             PopupMenuItem.Separator,
             new("退出 ZyDock", ExitApp, IsChecked: false, IsSeparator: false, IsDanger: true),
         ];
@@ -395,58 +385,6 @@ public partial class App : Application
         _settingsWindow?.ReloadFromSettings(settings);
     }
 
-    private void ReloadSettings()
-    {
-        var settings = _settingsService.Load();
-        _dock?.ApplySettings(settings, rebuildItems: true);
-        _settingsWindow?.ReloadFromSettings(settings);
-        _dock?.ShowToast("配置已重新载入。");
-    }
-
-    /// <summary>Drops the icon cache and re-reads every icon from the shell.</summary>
-    private void RefreshIcons()
-    {
-        try
-        {
-            _icons.Clear();
-            _dock?.ApplySettings(Settings, rebuildItems: true);
-            _dock?.ShowToast("图标已刷新。");
-        }
-        catch (Exception ex)
-        {
-            Log.Warn("刷新图标失败。", ex);
-        }
-    }
-
-    /// <summary>Opens the folder that holds settings.json (and the logs live one level up in LocalAppData).</summary>
-    private void OpenDataFolder()
-    {
-        try
-        {
-            var folder = ZyDock.Core.AppPaths.DataDirectory;
-            Directory.CreateDirectory(folder);
-            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("explorer.exe", $"\"{folder}\"") { UseShellExecute = true });
-        }
-        catch (Exception ex)
-        {
-            Log.Warn("打开配置文件夹失败。", ex);
-        }
-    }
-
-    /// <summary>Opens the folder that keeps app.log, so a bug report can attach it.</summary>
-    private void OpenLogFolder()
-    {
-        try
-        {
-            var folder = ZyDock.Core.AppPaths.LogDirectory;
-            Directory.CreateDirectory(folder);
-            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("explorer.exe", $"\"{folder}\"") { UseShellExecute = true });
-        }
-        catch (Exception ex)
-        {
-            Log.Warn("打开日志文件夹失败。", ex);
-        }
-    }
 
     #endregion
 
