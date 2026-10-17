@@ -16,6 +16,9 @@ internal static class Displays
     private const int SM_CXSCREEN = 0;
     private const int SM_CYSCREEN = 1;
 
+    /// <summary>Handle of the monitor a window is on (nearest monitor as fallback).</summary>
+    public static IntPtr MonitorOf(IntPtr hwnd) => NativeMethods.MonitorFromWindow(hwnd, 2);
+
     public static IReadOnlyList<ScreenInfo> All()
     {
         var list = new List<ScreenInfo>();

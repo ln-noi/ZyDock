@@ -133,6 +133,7 @@ public partial class DockWindow : Window
         RebuildLayout();
         RefreshRunningStates(force: true);
         ApplyAutoHideMode();
+        EvaluateFullscreen();
     }
 
     private void RebuildItems()
@@ -365,12 +366,109 @@ public partial class DockWindow : Window
         Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(NudgeToDesired));
         StartRunningTimer();
         StartProbeTimer();
+        StartFullscreenWatch();
 
         var refresh = Displays.GetRefreshRateHz();
         Log.Info(refresh > 0
             ? $"显示器刷新率 {refresh} Hz：动画按屏幕 vsync 逐帧驱动（每帧约 {1000.0 / refresh:0.00} ms）。"
             : "未能读取刷新率，动画仍按屏幕 vsync 逐帧驱动。");
     }
+
+    #region fullscreen
+
+    private DispatcherTimer? _fullscreenTimer;
+    private bool _fullscreenHidden;
+
+    private void StartFullscreenWatch()
+    {
+        if (_fullscreenTimer is not null)
+        {
+            return;
+        }
+
+        _fullscreenTimer = new DispatcherTimer(DispatcherPriority.Background)
+        {
+            Interval = TimeSpan.FromMilliseconds(400),
+        };
+        _fullscreenTimer.Tick += (_, _) => EvaluateFullscreen();
+        _fullscreenTimer.Start();
+    }
+
+    /// <summary>
+    /// Hides the dock while a fullscreen app owns this monitor (games, video players, browser
+    /// fullscreen) and brings it back when that app goes away.
+    /// </summary>
+    private void EvaluateFullscreen()
+    {
+        if (_disposed || _settings is null)
+        {
+            return;
+        }
+
+        var handle = _source?.Handle ?? IntPtr.Zero;
+        if (handle == IntPtr.Zero)
+        {
+            return;
+        }
+
+        if (!_settings.HideOnFullscreen)
+        {
+            if (_fullscreenHidden)
+            {
+                LeaveFullscreen();
+            }
+
+            return;
+        }
+
+        var fullscreen = FullscreenWatcher.IsFullscreenOn(Displays.MonitorOf(handle), handle);
+
+        if (fullscreen && !_fullscreenHidden)
+        {
+            EnterFullscreen();
+        }
+        else if (!fullscreen && _fullscreenHidden)
+        {
+            LeaveFullscreen();
+        }
+    }
+
+    private void EnterFullscreen()
+    {
+        _fullscreenHidden = true;
+        Log.Info("检测到全屏应用，Dock 已自动隐藏（退出全屏后恢复）。");
+
+        try
+        {
+            ResetMagnification();
+            HideChip();
+            Hide();
+        }
+        catch (Exception ex)
+        {
+            Log.Warn("隐藏 Dock 失败。", ex);
+        }
+    }
+
+    private void LeaveFullscreen()
+    {
+        _fullscreenHidden = false;
+        Log.Info("全屏应用已退出，Dock 恢复显示。");
+
+        try
+        {
+            Show();
+            _nudgePending = true;
+            Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(NudgeToDesired));
+            SetHidden(AutoHideEnabled && !_pointerInside);
+        }
+        catch (Exception ex)
+        {
+            Log.Warn("恢复 Dock 显示失败。", ex);
+        }
+    }
+
+    #endregion
 
     private void OnSourceInitialized(object? sender, EventArgs e)
     {
@@ -689,6 +787,12 @@ public partial class DockWindow : Window
 
         _pointerInside = true;
         _pointerX = point.X;
+
+        // While a fullscreen app owns this monitor the dock is hidden and must not react.
+        if (_fullscreenHidden)
+        {
+            return;
+        }
 
         if (_hidden)
         {
@@ -1687,6 +1791,8 @@ public partial class DockWindow : Window
         _probeTimer = null;
         _verifyTimer?.Stop();
         _verifyTimer = null;
+        _fullscreenTimer?.Stop();
+        _fullscreenTimer = null;
         _toastTimer?.Stop();
         _toastTimer = null;
 

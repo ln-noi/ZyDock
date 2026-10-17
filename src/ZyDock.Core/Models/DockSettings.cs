@@ -44,6 +44,9 @@ public sealed class DockSettings
     /// <summary>Slide the dock away when the mouse leaves it.</summary>
     public bool AutoHideEnabled { get; set; }
 
+    /// <summary>Hide the dock completely while a fullscreen app owns the dock's monitor.</summary>
+    public bool HideOnFullscreen { get; set; } = true;
+
     /// <summary>Ask Windows to auto-hide the taskbar while the dock is running.</summary>
     public bool HideSystemTaskbar { get; set; }
 
@@ -80,6 +83,7 @@ public sealed class DockSettings
             MagnifyFactor = MagnifyFactor,
             AutoHideEnabled = AutoHideEnabled,
             HideSystemTaskbar = HideSystemTaskbar,
+            HideOnFullscreen = HideOnFullscreen,
             ShowRunningIndicator = ShowRunningIndicator,
             ShowLabels = ShowLabels,
             ScreenIndex = ScreenIndex,

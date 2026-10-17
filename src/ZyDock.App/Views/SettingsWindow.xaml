@@ -270,6 +270,20 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <StackPanel>
+                                    <TextBlock Text="全屏时自动隐藏" Style="{StaticResource LabelText}" />
+                                    <TextBlock Text="有全屏应用（游戏 / 视频 / 浏览器全屏）时 Dock 完全隐藏，退出全屏后自动恢复" Style="{StaticResource HintText}" Margin="0,2,0,0" />
+                                </StackPanel>
+                                <ToggleButton x:Name="FullscreenToggle" Grid.Column="1" Style="{StaticResource ToggleSwitch}" />
+                            </Grid>
+
+                            <Border Height="1" Background="#14FFFFFF" Margin="0,12" />
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
                                     <TextBlock Text="隐藏 Windows 任务栏" Style="{StaticResource LabelText}" />
                                     <TextBlock Text="通过系统 AppBar 接口把任务栏设为自动隐藏，退出时自动恢复" Style="{StaticResource HintText}" Margin="0,2,0,0" />
                                 </StackPanel>

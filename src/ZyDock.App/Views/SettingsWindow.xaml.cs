@@ -177,6 +177,9 @@ public partial class SettingsWindow : Window
         IndicatorToggle.Checked += (_, _) => OnToggleChanged(() => _settings.ShowRunningIndicator = true);
         IndicatorToggle.Unchecked += (_, _) => OnToggleChanged(() => _settings.ShowRunningIndicator = false);
 
+        FullscreenToggle.Checked += (_, _) => OnToggleChanged(() => _settings.HideOnFullscreen = true);
+        FullscreenToggle.Unchecked += (_, _) => OnToggleChanged(() => _settings.HideOnFullscreen = false);
+
         AutoHideToggle.Checked += (_, _) => OnToggleChanged(() => _settings.AutoHideEnabled = true);
         AutoHideToggle.Unchecked += (_, _) => OnToggleChanged(() => _settings.AutoHideEnabled = false);
 
@@ -264,6 +267,7 @@ public partial class SettingsWindow : Window
             LabelsToggle.IsChecked = settings.ShowLabels;
             IndicatorToggle.IsChecked = settings.ShowRunningIndicator;
             AutoHideToggle.IsChecked = settings.AutoHideEnabled;
+            FullscreenToggle.IsChecked = settings.HideOnFullscreen;
             HideTaskbarToggle.IsChecked = settings.HideSystemTaskbar;
             AutoStartToggle.IsChecked = settings.AutoStartEnabled;
 
