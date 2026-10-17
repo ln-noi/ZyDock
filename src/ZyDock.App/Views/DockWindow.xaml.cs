@@ -161,7 +161,10 @@ public partial class DockWindow : Window
 
             // The cache has to live on the Image, not on the host Grid: a BitmapCache rasterises
             // only the element bounds, which would clip the reflection that overflows below.
-            image.CacheMode = new BitmapCache(Math.Max(1.0, _settings.MagnifyFactor));
+            // Cache at 1:1 with the displayed size. Caching at the *magnified* size made WPF
+            // downsample a larger bitmap to the resting size, which is what looked slightly
+            // soft at rest; 1:1 keeps the resting icons pixel-crisp.
+            image.CacheMode = new BitmapCache(1.0);
 
             var host = new Grid
             {
@@ -232,8 +235,8 @@ public partial class DockWindow : Window
             var cell = _cells[i];
             cell.Root.Width = _layout.IconSize;
             cell.Root.Height = _layout.IconSize;
-            Canvas.SetLeft(cell.Root, _layout.ItemLeft(i));
-            Canvas.SetTop(cell.Root, _layout.ItemsTop);
+            Canvas.SetLeft(cell.Root, SnapToDevicePixel(_layout.ItemLeft(i)));
+            Canvas.SetTop(cell.Root, SnapToDevicePixel(_layout.ItemsTop));
             cell.Scale.CenterX = _layout.IconSize / 2;
             cell.Scale.CenterY = _layout.IconSize;
         }
@@ -306,6 +309,14 @@ public partial class DockWindow : Window
         }
     }
 
+    /// <summary>Snaps a DIP coordinate to a whole physical pixel so icons never sit half-pixel
+    /// off, which is the other common source of soft-looking bitmaps.</summary>
+    private double SnapToDevicePixel(double dip)
+    {
+        var scale = _scale <= 0 ? 1.0 : _scale;
+        return Math.Round(dip * scale) / scale;
+    }
+
     /// <summary>Parses "#RRGGBB" into a Color, falling back to the default tint.</summary>
     private static Color ParseTint(string? value)
     {
@@ -362,7 +373,7 @@ public partial class DockWindow : Window
     /// </summary>
     private static UIElement CreateReflection(ImageSource? source, double iconSize)
     {
-        var height = Math.Max(6, iconSize * 0.34);
+        var height = Math.Max(6, iconSize * 0.30);
 
         // A Canvas measures its children with infinite space, so the reflection can hang below
         // the icon cell without being squeezed to zero height (a Grid would do exactly that).
@@ -382,7 +393,7 @@ public partial class DockWindow : Window
             Height = height,
             RenderTransformOrigin = new Point(0.5, 0.5),
             RenderTransform = new ScaleTransform(1, -1),
-            Opacity = 0.28,
+            Opacity = 0.20,
             OpacityMask = new LinearGradientBrush
             {
                 StartPoint = new Point(0.5, 0),

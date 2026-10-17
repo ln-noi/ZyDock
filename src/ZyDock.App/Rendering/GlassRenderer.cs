@@ -86,50 +86,88 @@ internal static class GlassRenderer
 
         if (spec.Highlights)
         {
-            // Top sheen: the brightest part of the design, still only a few percent alpha.
+            // Real glass reads through three thin cues, not one broad wash:
+            //   1. a sharp specular line hugging the top inner edge,
+            //   2. a very short sheen right under it,
+            //   3. a soft light pool at the bottom edge.
             var sheen = new LinearGradientBrush
             {
                 StartPoint = new Point(0.5, 0),
                 EndPoint = new Point(0.5, 1),
             };
-            sheen.GradientStops.Add(new GradientStop(Color.FromArgb(30, 255, 255, 255), 0));
+            sheen.GradientStops.Add(new GradientStop(Color.FromArgb(16, 255, 255, 255), 0));
             sheen.GradientStops.Add(new GradientStop(Color.FromArgb(0, 255, 255, 255), 1));
             plate.Children.Add(new Rectangle
             {
                 Fill = sheen,
-                Height = plateHeight * 0.52,
+                Height = Math.Max(4, plateHeight * 0.26),
                 VerticalAlignment = VerticalAlignment.Top,
             });
 
-            // Hairline inner shade: gives the rim a bevel without looking like a border.
+            // Thin bevel right under the rim: a couple of pixels of shade, not a band.
             var innerShade = new LinearGradientBrush
             {
                 StartPoint = new Point(0.5, 0),
                 EndPoint = new Point(0.5, 1),
             };
-            innerShade.GradientStops.Add(new GradientStop(Color.FromArgb(30, 0, 0, 0), 0));
+            innerShade.GradientStops.Add(new GradientStop(Color.FromArgb(26, 0, 0, 0), 0));
             innerShade.GradientStops.Add(new GradientStop(Color.FromArgb(0, 0, 0, 0), 1));
             plate.Children.Add(new Rectangle
             {
                 Fill = innerShade,
-                Height = Math.Max(3, plateHeight * 0.16),
+                Height = Math.Max(2, plateHeight * 0.075),
                 VerticalAlignment = VerticalAlignment.Top,
             });
 
-            // Faint light pooling at the bottom edge keeps the capsule floating.
+            // Light pooling along the bottom edge keeps the capsule floating.
             var floorLight = new LinearGradientBrush
             {
                 StartPoint = new Point(0.5, 1),
                 EndPoint = new Point(0.5, 0),
             };
-            floorLight.GradientStops.Add(new GradientStop(Color.FromArgb(20, 255, 255, 255), 0));
+            floorLight.GradientStops.Add(new GradientStop(Color.FromArgb(16, 255, 255, 255), 0));
             floorLight.GradientStops.Add(new GradientStop(Color.FromArgb(0, 255, 255, 255), 1));
             plate.Children.Add(new Rectangle
             {
                 Fill = floorLight,
-                Height = Math.Max(4, plateHeight * 0.26),
+                Height = Math.Max(3, plateHeight * 0.14),
                 VerticalAlignment = VerticalAlignment.Bottom,
             });
+
+            // Specular line: the single sharpest detail of the whole surface.
+            var specularInset = Math.Max(6, radius * 0.55);
+            var specular = new Rectangle
+            {
+                Height = Math.Max(0.8, 0.85 * scale),
+                Width = Math.Max(8, plateWidth - specularInset * 2),
+                RadiusX = 0.5 * scale,
+                RadiusY = 0.5 * scale,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                Margin = new Thickness(specularInset, Math.Max(1.0, 1.1 * scale), 0, 0),
+                Fill = new LinearGradientBrush(
+                    Color.FromArgb(0, 255, 255, 255),
+                    Color.FromArgb(150, 255, 255, 255),
+                    new Point(0, 0),
+                    new Point(1, 0)),
+                Opacity = 0.7,
+            };
+            plate.Children.Add(specular);
+
+            // Inset hairline: makes the surface feel like it has a thickness.
+            var insetLine = new Rectangle
+            {
+                Width = Math.Max(4, plateWidth - 3.0 * scale),
+                Height = Math.Max(4, plateHeight - 3.0 * scale),
+                RadiusX = Math.Max(1, radius - 1.5 * scale),
+                RadiusY = Math.Max(1, radius - 1.5 * scale),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                Margin = new Thickness(1.5 * scale),
+                Stroke = new SolidColorBrush(Color.FromArgb(30, 255, 255, 255)),
+                StrokeThickness = Math.Max(0.8, 0.7 * scale),
+            };
+            plate.Children.Add(insetLine);
         }
 
         Canvas.SetLeft(plate, margin * scale);
