@@ -1,0 +1,60 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=System.Runtime">
+
+    <!-- Graphite glass palette: dark, low contrast, one cold accent. -->
+    <Color x:Key="Ink950">#FF080A0E</Color>
+    <Color x:Key="Ink900">#FF0D1015</Color>
+    <Color x:Key="Ink850">#FF12161D</Color>
+    <Color x:Key="Ink800">#FF171C24</Color>
+    <Color x:Key="Ink750">#FF1D232C</Color>
+    <Color x:Key="Ink700">#FF242B35</Color>
+    <Color x:Key="Ink600">#FF313945</Color>
+
+    <Color x:Key="TextPrimary">#FFF3F6FA</Color>
+    <Color x:Key="TextSecondary">#FFAEB7C4</Color>
+    <Color x:Key="TextTertiary">#FF7C8794</Color>
+
+    <Color x:Key="AccentColor">#FF5A8FF5</Color>
+    <Color x:Key="AccentSoftColor">#FF3E6FD0</Color>
+    <Color x:Key="DangerColor">#FFE2645C</Color>
+
+    <SolidColorBrush x:Key="Ink950Brush" Color="{StaticResource Ink950}" />
+    <SolidColorBrush x:Key="Ink900Brush" Color="{StaticResource Ink900}" />
+    <SolidColorBrush x:Key="Ink850Brush" Color="{StaticResource Ink850}" />
+    <SolidColorBrush x:Key="Ink800Brush" Color="{StaticResource Ink800}" />
+    <SolidColorBrush x:Key="Ink750Brush" Color="{StaticResource Ink750}" />
+    <SolidColorBrush x:Key="Ink700Brush" Color="{StaticResource Ink700}" />
+    <SolidColorBrush x:Key="Ink600Brush" Color="{StaticResource Ink600}" />
+
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="{StaticResource TextPrimary}" />
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource TextSecondary}" />
+    <SolidColorBrush x:Key="TextTertiaryBrush" Color="{StaticResource TextTertiary}" />
+
+    <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}" />
+    <SolidColorBrush x:Key="DangerBrush" Color="{StaticResource DangerColor}" />
+
+    <SolidColorBrush x:Key="HairlineBrush" Color="#1FFFFFFF" />
+    <SolidColorBrush x:Key="HairlineStrongBrush" Color="#33FFFFFF" />
+    <SolidColorBrush x:Key="SurroundBrush" Color="#33000000" />
+
+    <LinearGradientBrush x:Key="WindowGlassBrush" StartPoint="0.5,0" EndPoint="0.5,1">
+        <GradientStop Color="#F2141820" Offset="0" />
+        <GradientStop Color="#F20E1218" Offset="0.55" />
+        <GradientStop Color="#F20A0D12" Offset="1" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="CardBrush" StartPoint="0.5,0" EndPoint="0.5,1">
+        <GradientStop Color="#14FFFFFF" Offset="0" />
+        <GradientStop Color="#08FFFFFF" Offset="1" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="AccentGradient" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#FF6FA2FF" Offset="0" />
+        <GradientStop Color="#FF3F72D8" Offset="1" />
+    </LinearGradientBrush>
+
+    <FontFamily x:Key="UiFont">Microsoft YaHei UI, Segoe UI, sans-serif</FontFamily>
+    <sys:Double x:Key="BodyFontSize">13</sys:Double>
+
+</ResourceDictionary>

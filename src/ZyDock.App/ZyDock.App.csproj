@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>ZyDock.App</RootNamespace>
+    <AssemblyName>ZyDock</AssemblyName>
+    <ApplicationIcon>Assets\App.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <PublishSingleFile Condition="'$(PublishSingleFile)' == ''">false</PublishSingleFile>
+    <!-- Opt-in automation hooks. Normal Release builds leave them out entirely. -->
+    <DefineConstants Condition="'$(ZydockAutomation)' == 'true'">$(DefineConstants);ZYDOCK_AUTOMATION</DefineConstants>
+    <AssemblyTitle>ZyDock</AssemblyTitle>
+    <Description>一个精致、克制的 Windows 透明悬浮 Dock 栏。</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ZyDock.Core\ZyDock.Core.csproj" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <Content Include="Assets\App.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <TargetPath>Assets\App.ico</TargetPath>
+    </Content>
+  </ItemGroup>
+
+</Project>

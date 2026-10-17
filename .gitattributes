@@ -1,0 +1,24 @@
+# Line endings: this is a Windows-only WPF project, so text files are normalised to
+# LF inside the repository and always checked out with CRLF in the working tree.
+* text=auto eol=crlf
+
+*.cs        text diff=csharp
+*.xaml      text
+*.csproj    text
+*.props     text
+*.sln       text
+*.ps1       text
+*.psm1      text
+*.mjs       text eol=lf
+*.md        text
+*.txt       text
+*.json      text
+*.config    text
+*.manifest  text
+*.gitignore text
+*.gitattributes text
+
+*.ico       binary
+*.png       binary
+*.jpg       binary
+*.zip       binary

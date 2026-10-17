@@ -1,0 +1,64 @@
+<Window x:Class="ZyDock.App.Views.DockWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="ZyDock"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ShowInTaskbar="False"
+        ShowActivated="False"
+        ResizeMode="NoResize"
+        Topmost="True"
+        Focusable="False"
+        SnapsToDevicePixels="True"
+        UseLayoutRounding="True"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Grayscale">
+
+    <Canvas x:Name="RootCanvas" Background="{x:Null}" ClipToBounds="True">
+        <Canvas x:Name="DockLayer" ClipToBounds="False">
+            <Canvas.RenderTransform>
+                <TranslateTransform x:Name="DockOffset" />
+            </Canvas.RenderTransform>
+
+            <Image x:Name="PlateImage"
+                   IsHitTestVisible="True"
+                   SnapsToDevicePixels="True"
+                   RenderOptions.BitmapScalingMode="HighQuality" />
+
+            <Canvas x:Name="DotLayer" IsHitTestVisible="False" />
+            <Canvas x:Name="ItemLayer" IsHitTestVisible="False" />
+
+            <Border x:Name="Chip" CacheMode="BitmapCache"
+                    CornerRadius="7"
+                    Background="#F012161D"
+                    BorderBrush="#26FFFFFF"
+                    BorderThickness="1"
+                    Padding="9,3"
+                    Visibility="Collapsed"
+                    IsHitTestVisible="False">
+                <TextBlock x:Name="ChipText"
+                           FontFamily="Microsoft YaHei UI, Segoe UI"
+                           FontSize="11.5"
+                           Foreground="#FFF2F5F9"
+                           TextOptions.TextFormattingMode="Ideal" />
+            </Border>
+
+            <Border x:Name="Toast"
+                    CornerRadius="8"
+                    Background="#F21A1010"
+                    BorderBrush="#55E2645C"
+                    BorderThickness="1"
+                    Padding="11,6"
+                    Visibility="Collapsed"
+                    IsHitTestVisible="False"
+                    MaxWidth="380">
+                <TextBlock x:Name="ToastText"
+                           FontFamily="Microsoft YaHei UI, Segoe UI"
+                           FontSize="11.5"
+                           Foreground="#FFFFE3E0"
+                           TextWrapping="Wrap" />
+            </Border>
+        </Canvas>
+    </Canvas>
+</Window>

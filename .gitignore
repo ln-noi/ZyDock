@@ -1,0 +1,45 @@
+# ---------------------------------------------------------------- build output
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+artifacts/
+publish/
+dist/
+
+# ------------------------------------------------------- local toolchain (SDK)
+# Downloaded .NET 8 SDK + NuGet cache used to build this repo offline.
+.tools/
+!tools/
+
+# --------------------------------------------------------------- IDE / editor
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.DotSettings.user
+
+# ------------------------------------------------------------- logs / reports
+*.log
+logs/
+_acl-reports/
+TestResults/
+
+# ------------------------------------------------------------ OS generated
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+
+# ------------------------------------------------------------- local scratch
+*.tmp
+*.bak
+*.orig
+.tmp/
+scratch/
