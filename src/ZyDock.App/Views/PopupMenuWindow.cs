@@ -81,8 +81,27 @@ internal sealed class PopupMenuWindow : Window
     protected override void OnDeactivated(EventArgs e)
     {
         base.OnDeactivated(e);
-        Close();
+
+        // Deactivation can fire again while the window is already closing (e.g. a second
+        // WM_ACTIVATE arrives during Close), and Close() would then throw
+        // "Cannot ... while a Window is closing". Guard it.
+        if (_closing)
+        {
+            return;
+        }
+
+        _closing = true;
+        try
+        {
+            Close();
+        }
+        catch (InvalidOperationException)
+        {
+            // Already closing: nothing to do.
+        }
     }
+
+    private bool _closing;
 
     protected override void OnKeyDown(KeyEventArgs e)
     {

@@ -35,6 +35,9 @@ public sealed class DockSettings
     /// <summary>Colour of the glass wash, "#RRGGBB". Dark = smoked glass, light = clear glass.</summary>
     public string TintColor { get; set; } = DefaultTint;
 
+    /// <summary>Draw a faint mirrored copy of each icon just below it ("拖影").</summary>
+    public bool IconReflection { get; set; }
+
     /// <summary>Draw the soft shadow under the capsule.</summary>
     public bool ShadowEnabled { get; set; } = true;
 
@@ -88,6 +91,7 @@ public sealed class DockSettings
             BorderThickness = BorderThickness,
             TintColor = TintColor,
             ShadowEnabled = ShadowEnabled,
+            IconReflection = IconReflection,
             PaddingHorizontal = PaddingHorizontal,
             PaddingVertical = PaddingVertical,
             MagnifyEnabled = MagnifyEnabled,

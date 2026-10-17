@@ -159,6 +159,10 @@ public partial class DockWindow : Window
             // LowQuality switch was what produced the soft / jagged icon edges.
             RenderOptions.SetBitmapScalingMode(image, BitmapScalingMode.HighQuality);
 
+            // The cache has to live on the Image, not on the host Grid: a BitmapCache rasterises
+            // only the element bounds, which would clip the reflection that overflows below.
+            image.CacheMode = new BitmapCache(Math.Max(1.0, _settings.MagnifyFactor));
+
             var host = new Grid
             {
                 Width = _settings.IconSize,
@@ -166,12 +170,17 @@ public partial class DockWindow : Window
                 RenderTransform = scaleTransform,
                 RenderTransformOrigin = new Point(0.5, 1.0),
                 IsHitTestVisible = false,
-
-                // Rasterise the icon once at its largest displayed size and scale that cache
-                // afterwards: per frame it is a cheap blit instead of a bitmap resample.
-                CacheMode = new BitmapCache(Math.Max(1.0, _settings.MagnifyFactor)),
+                // No CacheMode here on purpose: a BitmapCache rasterises just the element
+                // bounds and would clip the reflection that overflows below the icon.
+                // The cache lives on the Image instead.
             };
             host.Children.Add(image);
+
+            // Faint mirrored reflection under the icon ("拖影"), off by default.
+            if (_settings.IconReflection)
+            {
+                host.Children.Add(CreateReflection(image.Source, _settings.IconSize));
+            }
 
             ItemLayer.Children.Add(host);
             _cells.Add(new IconCell(item, host, image, scaleTransform));
@@ -346,6 +355,55 @@ public partial class DockWindow : Window
         }
     }
 
+    /// <summary>
+    /// Builds a mirrored, fading copy of the icon that sits just below it ("拖影"/reflection).
+    /// It lives inside the icon host, so it follows the magnification transform for free.
+    /// </summary>
+    private static UIElement CreateReflection(ImageSource? source, double iconSize)
+    {
+        var height = Math.Max(6, iconSize * 0.34);
+
+        // A Canvas measures its children with infinite space, so the reflection can hang below
+        // the icon cell without being squeezed to zero height (a Grid would do exactly that).
+        var layer = new Canvas
+        {
+            Width = iconSize,
+            Height = iconSize,
+            IsHitTestVisible = false,
+        };
+
+        var reflection = new Image
+        {
+            Source = source,
+            Stretch = Stretch.Uniform,
+            IsHitTestVisible = false,
+            Width = iconSize,
+            Height = height,
+            RenderTransformOrigin = new Point(0.5, 0.5),
+            RenderTransform = new ScaleTransform(1, -1),
+            Opacity = 0.28,
+            OpacityMask = new LinearGradientBrush
+            {
+                StartPoint = new Point(0.5, 0),
+                EndPoint = new Point(0.5, 1),
+                GradientStops =
+                {
+                    // The element is flipped vertically, so its bottom edge is the one that
+                    // touches the icon: keep the mask strong there and fade it away.
+                    new GradientStop(Color.FromArgb(0, 255, 255, 255), 0),
+                    new GradientStop(Color.FromArgb(240, 255, 255, 255), 1),
+                },
+            },
+        };
+
+        RenderOptions.SetBitmapScalingMode(reflection, BitmapScalingMode.LowQuality);
+        Canvas.SetLeft(reflection, 0);
+        Canvas.SetTop(reflection, iconSize + 2);
+        layer.Children.Add(reflection);
+
+        return layer;
+    }
+
     private void RebuildDots()
     {
         DotLayer.Children.Clear();
@@ -392,7 +450,9 @@ public partial class DockWindow : Window
 
     #region fullscreen
 
-    private DispatcherTimer? _fullscreenTimer;
+    private static readonly bool WatchDebug = Environment.GetEnvironmentVariable("ZYDOCK_WATCH_DEBUG") == "1";
+
+    private System.Threading.Timer? _fullscreenTimer;
     private bool _fullscreenHidden;
 
     private void StartFullscreenWatch()
@@ -402,18 +462,38 @@ public partial class DockWindow : Window
             return;
         }
 
-        _fullscreenTimer = new DispatcherTimer(DispatcherPriority.Background)
-        {
-            Interval = TimeSpan.FromMilliseconds(400),
-        };
-        _fullscreenTimer.Tick += (_, _) => EvaluateFullscreen();
-        _fullscreenTimer.Start();
+        // A DispatcherTimer stops being serviced once the dock window is hidden - and hiding
+        // the window is exactly what this watcher does, so the dock stayed hidden forever.
+        // A thread-pool timer keeps ticking regardless of window visibility and marshals the
+        // actual check back to the UI thread.
+        _fullscreenTimer = new System.Threading.Timer(
+            _ => PostEvaluateFullscreen(),
+            null,
+            dueTime: 500,
+            period: 400);
     }
 
     /// <summary>
     /// Hides the dock while the foreground window is maximized or fullscreen on this monitor
     /// (games, video players, browser fullscreen, any maximized window) and brings it back afterwards.
     /// </summary>
+    private void PostEvaluateFullscreen()
+    {
+        if (_disposed)
+        {
+            return;
+        }
+
+        try
+        {
+            Dispatcher.BeginInvoke(new Action(EvaluateFullscreen), DispatcherPriority.Background);
+        }
+        catch (Exception)
+        {
+            // Dispatcher already shutting down.
+        }
+    }
+
     private void EvaluateFullscreen()
     {
         if (_disposed || _settings is null)
@@ -438,6 +518,11 @@ public partial class DockWindow : Window
         }
 
         var fullscreen = WindowCoverageWatcher.CoversDesktop(Displays.MonitorOf(handle), handle);
+
+        if (WatchDebug)
+        {
+            Log.Info($"[watch] fullscreen={fullscreen} hidden={_fullscreenHidden} visible={IsVisible}");
+        }
 
         if (fullscreen && !_fullscreenHidden)
         {
@@ -1807,7 +1892,7 @@ public partial class DockWindow : Window
         _probeTimer = null;
         _verifyTimer?.Stop();
         _verifyTimer = null;
-        _fullscreenTimer?.Stop();
+        _fullscreenTimer?.Dispose();
         _fullscreenTimer = null;
         _toastTimer?.Stop();
         _toastTimer = null;

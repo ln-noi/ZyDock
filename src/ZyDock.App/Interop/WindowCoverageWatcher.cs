@@ -87,16 +87,44 @@ internal static class WindowCoverageWatcher
                 return false;
             }
 
-            var target = info.rcWork;
+            // 1) Authoritative answer for "maximized": ask Windows for the window's placement.
+            //    Comparing rectangles alone breaks as soon as the taskbar is set to auto-hide,
+            //    because then the work area is the whole screen while a maximized window stops
+            //    a few pixels above the bottom edge.
+            var placement = new NativeMethods.WINDOWPLACEMENT
+            {
+                length = System.Runtime.InteropServices.Marshal.SizeOf<NativeMethods.WINDOWPLACEMENT>(),
+            };
 
-            return rect.Left <= target.Left + Tolerance
-                && rect.Top <= target.Top + Tolerance
-                && rect.Right >= target.Right - Tolerance
-                && rect.Bottom >= target.Bottom - Tolerance;
+            if (NativeMethods.GetWindowPlacement(foreground, ref placement))
+            {
+                const int swShowMaximized = 3;
+                if (placement.showCmd == swShowMaximized)
+                {
+                    return true;
+                }
+            }
+
+            // 2) Borderless fullscreen (games / video players) has no "maximized" state, so fall
+            //    back to geometry: cover the work area, or the whole monitor.
+            if (Covers(rect, info.rcWork))
+            {
+                return true;
+            }
+
+            return Covers(rect, info.rcMonitor);
         }
         catch
         {
             return false;
+        }
+
+        static bool Covers(NativeMethods.RECT window, NativeMethods.RECT target)
+        {
+            return window.Left <= target.Left + Tolerance
+                && window.Top <= target.Top + Tolerance
+                && window.Right >= target.Right - Tolerance
+                && window.Bottom >= target.Bottom - Tolerance;
         }
     }
 }

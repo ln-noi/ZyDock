@@ -180,6 +180,9 @@ public partial class SettingsWindow : Window
         FullscreenToggle.Checked += (_, _) => OnToggleChanged(() => _settings.HideOnFullscreen = true);
         FullscreenToggle.Unchecked += (_, _) => OnToggleChanged(() => _settings.HideOnFullscreen = false);
 
+        ReflectionToggle.Checked += (_, _) => OnToggleChanged(() => _settings.IconReflection = true);
+        ReflectionToggle.Unchecked += (_, _) => OnToggleChanged(() => _settings.IconReflection = false);
+
         ShadowToggle.Checked += (_, _) => OnToggleChanged(() => _settings.ShadowEnabled = true);
         ShadowToggle.Unchecked += (_, _) => OnToggleChanged(() => _settings.ShadowEnabled = false);
 
@@ -315,6 +318,7 @@ public partial class SettingsWindow : Window
             IndicatorToggle.IsChecked = settings.ShowRunningIndicator;
             AutoHideToggle.IsChecked = settings.AutoHideEnabled;
             ShadowToggle.IsChecked = settings.ShadowEnabled;
+            ReflectionToggle.IsChecked = settings.IconReflection;
             TintHexBox.Text = settings.TintColor;
             FullscreenToggle.IsChecked = settings.HideOnFullscreen;
             HideTaskbarToggle.IsChecked = settings.HideSystemTaskbar;

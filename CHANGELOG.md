@@ -5,6 +5,26 @@
 
 ---
 
+## 第九轮 · 修复最大化不隐藏 + 图标拖影
+
+反馈：最大化应用后 Dock 不再自动隐藏。定位到**两个独立 bug**：
+
+| Bug | 原因 | 修复 |
+| --- | --- | --- |
+| 隐藏后再也不恢复 | 检测用的是 `DispatcherTimer`，而它**在窗口 `Hide()` 之后就不再被调度**——隐藏窗口正是这个检测做的事，于是 Dock 永久留在隐藏状态 | 改用 `System.Threading.Timer`（线程池定时器），不受窗口可见性影响，回调再 marshal 回 UI 线程 |
+| 最大化检测失效 | 之前用"窗口矩形是否覆盖工作区"判断。当任务栏设为自动隐藏时，工作区变成整块屏幕，而最大化窗口底部还差 ~32px 缩进，永远达不到阈值 | 增加权威判定：`GetWindowPlacement().showCmd == SW_SHOWMAXIMIZED`；几何判断只用于无边框全屏（rcWork 或 rcMonitor 覆盖） |
+
+> 顺带修掉一个老 bug：`PopupMenuWindow.OnDeactivated` 在窗口已经关闭时又调用 `Close()`，会产生 `InvalidOperationException: Cannot ... while a Window is closing`（日志里那几条 UI 线程异常就是它）。
+
+新功能：**图标拖影**（设置 → 外观 → 「图标拖影」，默认关）
+- 每个图标下方绘制一层镜像、渐隐的倒影（高度 34%、透明度 0.28、渐变遮罩）
+- 倒影放在图标宿主内部的 `Canvas` 里，因此跟随磁吸放大一起缩放，且不需要每帧额外计算
+- 关键细节：`BitmapCache` 会把子元素裁到元素边界，所以缓存必须挂在 `Image` 上而不是宿主 `Grid`；否则倒影会被裁掉（调试时踩过）
+
+实测：最大化 → 日志 `[watch] fullscreen=True` 并隐藏；还原后 `fullscreen=False` 且恢复显示；拖影在壁纸与白底上均可见。
+
+---
+
 ## 第八轮 · 底部阴影开关 + 玻璃颜色可选
 
 需求：① 加一个"底部阴影"开关；② 纯白界面下玻璃发黑，需要能选颜色。
