@@ -1,0 +1,19 @@
+# ZyDock 1.0.0 - SHA-256 checksums for the official release files
+#
+# This file is committed to the repository, so its history is auditable:
+#   git log -p SHA256SUMS.txt
+#
+# Verify after downloading (keep this file next to the downloaded files):
+#   PowerShell : powershell -ExecutionPolicy Bypass -File verify-download.ps1
+#   PowerShell : Get-FileHash .\<file> -Algorithm SHA256
+#   CMD        : certutil -hashfile <file> SHA256
+#   7-Zip      : right click -> CRC SHA -> SHA-256
+#
+# A file name does not affect its digest: renaming ZyDock-1.0.0.exe to
+# ZyDock.exe keeps the same SHA-256 value.
+#
+# Hashes prove the file matches this list; they do not prove authorship.
+# Only a signed artifact (code signing / attestation) proves who built it.
+7bf51c30216a436a300b063d724029bc4c16d9b76a4eb31afe5cfdd129af4ff7  ZyDock-1.0.0.exe
+90c76362e5d5d08b73c1e13ecb25c1464866c3a1f7b99067b9baa4c4fda94e9b  ZyDock-1.0.0-singlefile.zip
+307f3a33bf66cf80e858bd22547fac6c888bf52d347b22fabbc34c40d42d8cd6  ZyDock-1.0.0.zip

@@ -64,28 +64,42 @@
 
 > 未做代码签名，首次运行会出现 SmartScreen「Windows 已保护你的电脑」→「更多信息」→「仍要运行」。
 
-#### 校验下载（可选但推荐）
+#### 校验下载（推荐）
 
-发布页会给出每个文件的 **SHA-256**（同时提供 `SHA256SUMS.txt`）。下载后核对一下，可以确认文件在传输中没有损坏、也没有被替换：
+仓库根目录的 **[SHA256SUMS.txt](SHA256SUMS.txt)** 记录了官方发布文件（`ZyDock-<ver>.exe` 与两个 zip）的 SHA-256，并且**随代码一起进版本库**，所以可以用 `git log -p SHA256SUMS.txt` 追溯它是什么时候、由哪次提交改的。
+
+把 `SHA256SUMS.txt` 和下载的文件放进同一目录，直接运行仓库里的校验脚本即可：
 
 ```powershell
-# 单个文件
-Get-FileHash .\ZyDock.exe -Algorithm SHA256
-
-# 或对着清单批量校验（文件名与清单里的名字一致时）
-Get-Content .\SHA256SUMS.txt | ForEach-Object {
-    if ($_ -match '^([0-9a-f]{64})\s+(.+)$') {
-        $expect = $matches[1]; $name = $matches[2].Trim()
-        $actual = (Get-FileHash ".\$name" -Algorithm SHA256).Hash
-        '{0,-34} {1}' -f $name, $(if ($actual -eq $expect) { 'OK' } else { 'MISMATCH' })
-    }
-}
+# 下载 tools\verify-download.ps1 到同一目录后运行（无需其它依赖）
+powershell -ExecutionPolicy Bypass -File .\verify-download.ps1
 ```
 
-CMD 也可以用 `certutil -hashfile ZyDock.exe SHA256`；装了 7-Zip 的话右键 → `CRC SHA` → `SHA-256`。
+输出形如：
 
-> 哈希只能证明「和你发布的那份是同一个文件」，不能证明来源身份 —— 那是代码签名的事（本项目未签名）。
+```
+OK       ZyDock-1.0.0.exe
+OK       ZyDock-1.0.0-singlefile.zip
+OK       ZyDock-1.0.0.zip
 
+Summary: 3 OK, 0 mismatch, 0 missing
+```
+
+也可以手工核对：
+
+```powershell
+Get-FileHash .\ZyDock-1.0.0.exe -Algorithm SHA256     # PowerShell
+```
+```cmd
+certutil -hashfile ZyDock-1.0.0.exe SHA256            :: CMD
+```
+
+装了 7-Zip 的话：右键文件 → `CRC SHA` → `SHA-256`。
+
+- **一致** → 文件和发布时完全相同
+- **不一致** → 下载损坏或被替换，**不要运行**，重新从官方地址下载
+
+> ⚠️ 哈希能证明「和你发布的那份是同一个文件」，**不能证明是谁做的** —— 那是代码签名 / 构建证明的事（本项目暂未签名）。所以请只从本仓库的 Releases 页面下载；从其它站点拿到的副本即使哈希对得上，也只能说明它和某个副本一致。
 ### 从源码构建
 
 ```powershell
@@ -98,6 +112,24 @@ powershell -ExecutionPolicy Bypass -File publish.ps1 -SingleFile
 ```
 
 环境搭建（含离线获取 SDK）见 **[docs/BUILD.md](docs/BUILD.md)**。
+
+#### 维护者发布流程
+
+```powershell
+# 1) 出包（目录版 + zip；-SingleFile 追加单文件版）
+powershell -ExecutionPolicy Bypass -File publish.ps1 -SingleFile
+
+# 2) 生成 upload-ready 的发布目录 + 重新计算哈希（同时更新仓库根的 SHA256SUMS.txt）
+powershell -ExecutionPolicy Bypass -File tools\make-release.ps1 -Version 1.0.0
+
+# 3) 提交新的 SHA256SUMS.txt（让哈希可追溯到某次提交）
+git add SHA256SUMS.txt
+git commit -m "release: 1.0.0"
+
+# 4) 打 tag，把 dist\release\ 里的文件作为 Release 资产上传，
+#    并把 make-release.ps1 输出的 SHA-256 一行贴进 Release 说明
+git tag v1.0.0
+```
 
 ### 操作方式
 
