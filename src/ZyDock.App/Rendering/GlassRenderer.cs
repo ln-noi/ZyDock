@@ -15,7 +15,9 @@ internal sealed record PlateSpec(
     double Scale,
     double Opacity,
     bool Highlights,
-    double BorderThickness);
+    double BorderThickness,
+    bool Shadow,
+    Color Tint);
 
 /// <summary>
 /// Renders the dock backplate as **clear glass**: a nearly transparent capsule defined by a
@@ -44,8 +46,12 @@ internal static class GlassRenderer
         var root = new Canvas { Width = width, Height = height };
 
         // Soft floor shadow: this plus the rim is what defines the capsule on bright desktops.
-        AddShadow(root, plateWidth, plateHeight, radius, margin * scale, 22 * scale, 80, 6 * scale);
-        AddShadow(root, plateWidth, plateHeight, radius, margin * scale, 7 * scale, 54, 2 * scale);
+        // The user can switch it off to get a completely flat panel.
+        if (spec.Shadow)
+        {
+            AddShadow(root, plateWidth, plateHeight, radius, margin * scale, 22 * scale, 80, 6 * scale);
+            AddShadow(root, plateWidth, plateHeight, radius, margin * scale, 7 * scale, 54, 2 * scale);
+        }
 
         var plate = new Grid
         {
@@ -62,8 +68,12 @@ internal static class GlassRenderer
             StartPoint = new Point(0.5, 0),
             EndPoint = new Point(0.5, 1),
         };
-        tint.GradientStops.Add(new GradientStop(Color.FromArgb(alpha, 0x1A, 0x20, 0x2A), 0));
-        tint.GradientStops.Add(new GradientStop(Color.FromArgb(bottomAlpha, 0x0B, 0x0E, 0x14), 1));
+        // The wash colour comes from the settings: a dark tint reads like smoked glass on a dark
+        // wallpaper but looks dirty on a white page, so a light tint is available too.
+        var topTint = Lighten(spec.Tint, 0.18);
+        var bottomTint = Darken(spec.Tint, 0.34);
+        tint.GradientStops.Add(new GradientStop(Color.FromArgb(alpha, topTint.R, topTint.G, topTint.B), 0));
+        tint.GradientStops.Add(new GradientStop(Color.FromArgb(bottomAlpha, bottomTint.R, bottomTint.G, bottomTint.B), 1));
         plate.Children.Add(new Rectangle { Fill = tint });
 
         if (spec.Highlights)
@@ -192,6 +202,26 @@ internal static class GlassRenderer
         Canvas.SetLeft(shadow, left);
         Canvas.SetTop(shadow, left + offsetY);
         root.Children.Add(shadow);
+    }
+
+    /// <summary>Blends a colour towards white; used for the top of the capsule.</summary>
+    private static Color Lighten(Color color, double amount)
+    {
+        amount = Math.Clamp(amount, 0, 1);
+        return Color.FromRgb(
+            (byte)Math.Round(color.R + (255 - color.R) * amount),
+            (byte)Math.Round(color.G + (255 - color.G) * amount),
+            (byte)Math.Round(color.B + (255 - color.B) * amount));
+    }
+
+    /// <summary>Blends a colour towards black; used for the bottom of the capsule.</summary>
+    private static Color Darken(Color color, double amount)
+    {
+        amount = Math.Clamp(amount, 0, 1);
+        return Color.FromRgb(
+            (byte)Math.Round(color.R * (1 - amount)),
+            (byte)Math.Round(color.G * (1 - amount)),
+            (byte)Math.Round(color.B * (1 - amount)));
     }
 
     private static byte ToByte(double value) => (byte)Math.Clamp((int)Math.Round(value * 255), 0, 255);

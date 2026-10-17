@@ -178,6 +178,56 @@
                                               Style="{StaticResource ToggleSwitch}" />
                             </Grid>
 
+                            <Border Height="1" Background="#14FFFFFF" Margin="0,12" />
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="底部阴影" Style="{StaticResource LabelText}" />
+                                    <TextBlock Text="胶囊下方的柔和投影，关掉后 Dock 完全平贴桌面" Style="{StaticResource HintText}" Margin="0,2,0,0" />
+                                </StackPanel>
+                                <ToggleButton x:Name="ShadowToggle" Grid.Column="1"
+                                              Style="{StaticResource ToggleSwitch}" />
+                            </Grid>
+
+                            <Border Height="1" Background="#14FFFFFF" Margin="0,12" />
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="玻璃颜色" Style="{StaticResource LabelText}" />
+                                    <TextBlock Text="白底上偏黑就换成浅色；深色 = 烟熏玻璃，浅色 = 清透玻璃" Style="{StaticResource HintText}" Margin="0,2,0,0" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Button x:Name="TintDark" Tag="#0B0E13" Width="22" Height="22" Margin="0,0,6,0"
+                                            Padding="0" BorderThickness="1" BorderBrush="#40FFFFFF" Background="#0B0E13"
+                                            Style="{StaticResource TintSwatchButton}" ToolTip="石墨黑（默认）" Click="OnTintSwatchClick" />
+                                    <Button x:Name="TintGray" Tag="#2F353D" Width="22" Height="22" Margin="0,0,6,0"
+                                            Padding="0" BorderThickness="1" BorderBrush="#40FFFFFF" Background="#2F353D"
+                                            Style="{StaticResource TintSwatchButton}" ToolTip="深空灰" Click="OnTintSwatchClick" />
+                                    <Button x:Name="TintSilver" Tag="#C8D2DC" Width="22" Height="22" Margin="0,0,6,0"
+                                            Padding="0" BorderThickness="1" BorderBrush="#40FFFFFF" Background="#C8D2DC"
+                                            Style="{StaticResource TintSwatchButton}" ToolTip="冷银（白底推荐）" Click="OnTintSwatchClick" />
+                                    <Button x:Name="TintWhite" Tag="#FFFFFF" Width="22" Height="22" Margin="0,0,6,0"
+                                            Padding="0" BorderThickness="1" BorderBrush="#40FFFFFF" Background="#FFFFFF"
+                                            Style="{StaticResource TintSwatchButton}" ToolTip="纯白" Click="OnTintSwatchClick" />
+                                    <Button x:Name="TintBlue" Tag="#7FA8FF" Width="22" Height="22" Margin="0,0,6,0"
+                                            Padding="0" BorderThickness="1" BorderBrush="#40FFFFFF" Background="#7FA8FF"
+                                            Style="{StaticResource TintSwatchButton}" ToolTip="冰蓝" Click="OnTintSwatchClick" />
+                                    <Button x:Name="TintViolet" Tag="#B49BFF" Width="22" Height="22" Margin="0,0,10,0"
+                                            Padding="0" BorderThickness="1" BorderBrush="#40FFFFFF" Background="#B49BFF"
+                                            Style="{StaticResource TintSwatchButton}" ToolTip="淡紫" Click="OnTintSwatchClick" />
+                                    <TextBox x:Name="TintHexBox" Width="92" Height="26" VerticalContentAlignment="Center"
+                                             Style="{StaticResource HexTextBox}" ToolTip="自定义颜色：#RRGGBB，回车生效" />
+                                </StackPanel>
+                            </Grid>
+
                             <TextBlock Style="{StaticResource HintText}" Margin="0,8,0,0"
                                        Text="底板为「清玻璃」：不模糊、不取壁纸、不做颗粒噪点，只是近乎透明的一层薄雾 + 发丝描边 + 柔和投影，Dock 后面是什么就直接透出什么。" />                            <Border Height="1" Background="#14FFFFFF" Margin="0,12" />
 

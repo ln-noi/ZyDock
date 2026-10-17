@@ -180,6 +180,15 @@ public partial class SettingsWindow : Window
         FullscreenToggle.Checked += (_, _) => OnToggleChanged(() => _settings.HideOnFullscreen = true);
         FullscreenToggle.Unchecked += (_, _) => OnToggleChanged(() => _settings.HideOnFullscreen = false);
 
+        ShadowToggle.Checked += (_, _) => OnToggleChanged(() => _settings.ShadowEnabled = true);
+        ShadowToggle.Unchecked += (_, _) => OnToggleChanged(() => _settings.ShadowEnabled = false);
+
+        TintHexBox.LostFocus += (_, _) => ApplyTintFromBox();
+        TintHexBox.KeyDown += (_, e) =>
+        {
+            if (e.Key == System.Windows.Input.Key.Enter) { ApplyTintFromBox(); e.Handled = true; }
+        };
+
         AutoHideToggle.Checked += (_, _) => OnToggleChanged(() => _settings.AutoHideEnabled = true);
         AutoHideToggle.Unchecked += (_, _) => OnToggleChanged(() => _settings.AutoHideEnabled = false);
 
@@ -198,6 +207,44 @@ public partial class SettingsWindow : Window
         }
 
         mutate();
+        ScheduleApply();
+    }
+
+    /// <summary>Clicking a colour swatch selects that glass colour.</summary>
+    private void OnTintSwatchClick(object sender, RoutedEventArgs e)
+    {
+        if (_suppress || sender is not FrameworkElement element || element.Tag is not string hex)
+        {
+            return;
+        }
+
+        _settings.TintColor = DockSettings.NormalizeColor(hex);
+        TintHexBox.Text = _settings.TintColor;
+        ScheduleApply();
+    }
+
+    /// <summary>Applies whatever was typed into the hex box; invalid input falls back to the current colour.</summary>
+    private void ApplyTintFromBox()
+    {
+        if (_suppress)
+        {
+            return;
+        }
+
+        var normalized = DockSettings.NormalizeColor(TintHexBox.Text);
+        if (string.Equals(normalized, TintHexBox.Text, StringComparison.OrdinalIgnoreCase))
+        {
+            return;
+        }
+
+        TintHexBox.Text = _settings.TintColor;
+        if (string.Equals(normalized, _settings.TintColor, StringComparison.OrdinalIgnoreCase))
+        {
+            return;
+        }
+
+        _settings.TintColor = normalized;
+        TintHexBox.Text = normalized;
         ScheduleApply();
     }
 
@@ -267,6 +314,8 @@ public partial class SettingsWindow : Window
             LabelsToggle.IsChecked = settings.ShowLabels;
             IndicatorToggle.IsChecked = settings.ShowRunningIndicator;
             AutoHideToggle.IsChecked = settings.AutoHideEnabled;
+            ShadowToggle.IsChecked = settings.ShadowEnabled;
+            TintHexBox.Text = settings.TintColor;
             FullscreenToggle.IsChecked = settings.HideOnFullscreen;
             HideTaskbarToggle.IsChecked = settings.HideSystemTaskbar;
             AutoStartToggle.IsChecked = settings.AutoStartEnabled;

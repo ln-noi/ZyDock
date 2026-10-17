@@ -297,6 +297,20 @@ public partial class DockWindow : Window
         }
     }
 
+    /// <summary>Parses "#RRGGBB" into a Color, falling back to the default tint.</summary>
+    private static Color ParseTint(string? value)
+    {
+        try
+        {
+            var text = DockSettings.NormalizeColor(value);
+            return (Color)ColorConverter.ConvertFromString(text);
+        }
+        catch
+        {
+            return (Color)ColorConverter.ConvertFromString(DockSettings.DefaultTint);
+        }
+    }
+
     private void RebuildPlate()
     {
         try
@@ -310,7 +324,9 @@ public partial class DockWindow : Window
                 scale,
                 _settings.PanelOpacity,
                 _settings.GlassEnabled,
-                _settings.BorderThickness);
+                _settings.BorderThickness,
+                _settings.ShadowEnabled,
+                ParseTint(_settings.TintColor));
 
             var bitmap = GlassRenderer.Render(spec);
             PlateImage.Source = bitmap;

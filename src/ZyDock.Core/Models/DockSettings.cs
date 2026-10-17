@@ -9,6 +9,9 @@ public sealed class DockSettings
 {
     public const int CurrentSchemaVersion = 1;
 
+    /// <summary>Default glass wash colour (smoked glass).</summary>
+    public const string DefaultTint = "#0B0E13";
+
     public int SchemaVersion { get; set; } = CurrentSchemaVersion;
 
     /// <summary>Icon edge length in device independent pixels.</summary>
@@ -28,6 +31,12 @@ public sealed class DockSettings
 
     /// <summary>Space between the capsule edge and the icons, top and bottom.</summary>
     public double PaddingVertical { get; set; } = 18;
+
+    /// <summary>Colour of the glass wash, "#RRGGBB". Dark = smoked glass, light = clear glass.</summary>
+    public string TintColor { get; set; } = DefaultTint;
+
+    /// <summary>Draw the soft shadow under the capsule.</summary>
+    public bool ShadowEnabled { get; set; } = true;
 
     /// <summary>Rim thickness in DIP; 0 = no border at all.</summary>
     public double BorderThickness { get; set; } = 1.0;
@@ -77,6 +86,8 @@ public sealed class DockSettings
             EdgeOffset = EdgeOffset,
             GlassEnabled = GlassEnabled,
             BorderThickness = BorderThickness,
+            TintColor = TintColor,
+            ShadowEnabled = ShadowEnabled,
             PaddingHorizontal = PaddingHorizontal,
             PaddingVertical = PaddingVertical,
             MagnifyEnabled = MagnifyEnabled,
@@ -102,6 +113,7 @@ public sealed class DockSettings
         EdgeOffset = Math.Round(Clamp(EdgeOffset, 0, 64), 1);
         MagnifyFactor = Math.Round(Clamp(MagnifyFactor, 1.0, 1.9), 2);
         BorderThickness = Math.Round(Clamp(BorderThickness, 0, 3), 2);
+        TintColor = NormalizeColor(TintColor);
         PaddingHorizontal = Math.Round(Clamp(PaddingHorizontal, 0, 80), 0);
         PaddingVertical = Math.Round(Clamp(PaddingVertical, 0, 60), 0);
 
@@ -131,6 +143,36 @@ public sealed class DockSettings
 
         static double Clamp(double value, double min, double max) =>
             double.IsNaN(value) || double.IsInfinity(value) ? min : Math.Min(max, Math.Max(min, value));
+    }
+
+    /// <summary>Coerces a "#RRGGBB" string into a valid colour, falling back to the default.</summary>
+    public static string NormalizeColor(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return DefaultTint;
+        }
+
+        var text = value.Trim();
+        if (!text.StartsWith('#'))
+        {
+            text = "#" + text;
+        }
+
+        if (text.Length != 7)
+        {
+            return DefaultTint;
+        }
+
+        for (var i = 1; i < text.Length; i++)
+        {
+            if (!Uri.IsHexDigit(text[i]))
+            {
+                return DefaultTint;
+            }
+        }
+
+        return text.ToUpperInvariant();
     }
 
     public static string DeriveName(DockItem item)
