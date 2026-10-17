@@ -64,6 +64,28 @@
 
 > 未做代码签名，首次运行会出现 SmartScreen「Windows 已保护你的电脑」→「更多信息」→「仍要运行」。
 
+#### 校验下载（可选但推荐）
+
+发布页会给出每个文件的 **SHA-256**（同时提供 `SHA256SUMS.txt`）。下载后核对一下，可以确认文件在传输中没有损坏、也没有被替换：
+
+```powershell
+# 单个文件
+Get-FileHash .\ZyDock.exe -Algorithm SHA256
+
+# 或对着清单批量校验（文件名与清单里的名字一致时）
+Get-Content .\SHA256SUMS.txt | ForEach-Object {
+    if ($_ -match '^([0-9a-f]{64})\s+(.+)$') {
+        $expect = $matches[1]; $name = $matches[2].Trim()
+        $actual = (Get-FileHash ".\$name" -Algorithm SHA256).Hash
+        '{0,-34} {1}' -f $name, $(if ($actual -eq $expect) { 'OK' } else { 'MISMATCH' })
+    }
+}
+```
+
+CMD 也可以用 `certutil -hashfile ZyDock.exe SHA256`；装了 7-Zip 的话右键 → `CRC SHA` → `SHA-256`。
+
+> 哈希只能证明「和你发布的那份是同一个文件」，不能证明来源身份 —— 那是代码签名的事（本项目未签名）。
+
 ### 从源码构建
 
 ```powershell
