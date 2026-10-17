@@ -17,7 +17,8 @@ internal sealed record PlateSpec(
     bool Highlights,
     double BorderThickness,
     bool Shadow,
-    Color Tint);
+    Color Tint,
+    bool TintEnabled);
 
 /// <summary>
 /// Renders the dock backplate as **clear glass**: a nearly transparent capsule defined by a
@@ -61,20 +62,27 @@ internal static class GlassRenderer
         };
 
         // Extremely light graphite wash so the capsule reads as glass instead of nothing.
+        // "TintEnabled = false" ("清底") skips the wash entirely: only the rim, the highlights
+        // and the shadow remain, so whatever is behind the dock shows through unchanged.
         var alpha = ToByte(Math.Clamp(spec.Opacity, 0.0, 0.92) * 0.62);
         var bottomAlpha = ToByte(Math.Clamp(spec.Opacity * 1.05 + 0.02, 0.0, 0.94) * 0.62);
-        var tint = new LinearGradientBrush
+
+        if (spec.TintEnabled)
         {
-            StartPoint = new Point(0.5, 0),
-            EndPoint = new Point(0.5, 1),
-        };
-        // The wash colour comes from the settings: a dark tint reads like smoked glass on a dark
-        // wallpaper but looks dirty on a white page, so a light tint is available too.
-        var topTint = Lighten(spec.Tint, 0.18);
-        var bottomTint = Darken(spec.Tint, 0.34);
-        tint.GradientStops.Add(new GradientStop(Color.FromArgb(alpha, topTint.R, topTint.G, topTint.B), 0));
-        tint.GradientStops.Add(new GradientStop(Color.FromArgb(bottomAlpha, bottomTint.R, bottomTint.G, bottomTint.B), 1));
-        plate.Children.Add(new Rectangle { Fill = tint });
+            var tint = new LinearGradientBrush
+            {
+                StartPoint = new Point(0.5, 0),
+                EndPoint = new Point(0.5, 1),
+            };
+
+            // The wash colour comes from the settings: a dark tint reads like smoked glass on a
+            // dark wallpaper but looks dirty on a white page, so a light tint is available too.
+            var topTint = Lighten(spec.Tint, 0.18);
+            var bottomTint = Darken(spec.Tint, 0.34);
+            tint.GradientStops.Add(new GradientStop(Color.FromArgb(alpha, topTint.R, topTint.G, topTint.B), 0));
+            tint.GradientStops.Add(new GradientStop(Color.FromArgb(bottomAlpha, bottomTint.R, bottomTint.G, bottomTint.B), 1));
+            plate.Children.Add(new Rectangle { Fill = tint });
+        }
 
         if (spec.Highlights)
         {

@@ -213,18 +213,42 @@ public partial class SettingsWindow : Window
         ScheduleApply();
     }
 
-    /// <summary>Clicking a colour swatch selects that glass colour.</summary>
+    /// <summary>Clicking a swatch selects it; clicking the active colour again switches to "清底".</summary>
     private void OnTintSwatchClick(object sender, RoutedEventArgs e)
     {
-        if (_suppress || sender is not FrameworkElement element || element.Tag is not string hex)
+        if (_suppress || sender is not FrameworkElement element || element.Tag is not string tag)
         {
             return;
         }
 
-        _settings.TintColor = DockSettings.NormalizeColor(hex);
-        TintHexBox.Text = _settings.TintColor;
-        UpdateTintSwatchSelection();
+        if (tag == ClearTintTag)
+        {
+            // "清底": no colour wash at all - the desktop behind shows through unchanged.
+            _settings.TintEnabled = false;
+        }
+        else if (_settings.TintEnabled &&
+                 string.Equals(tag, _settings.TintColor, StringComparison.OrdinalIgnoreCase))
+        {
+            // Clicking the colour that is already active toggles the wash off again.
+            _settings.TintEnabled = false;
+        }
+        else
+        {
+            _settings.TintEnabled = true;
+            _settings.TintColor = DockSettings.NormalizeColor(tag);
+        }
+
+        SyncTintControls();
         ScheduleApply();
+    }
+
+    private const string ClearTintTag = "__clear__";
+
+    /// <summary>Refreshes the swatch highlight and the colour box to match the current state.</summary>
+    private void SyncTintControls()
+    {
+        TintHexBox.Text = _settings.TintEnabled ? _settings.TintColor : "清底";
+        UpdateTintSwatchSelection();
     }
 
     /// <summary>Applies whatever was typed into the hex box; invalid input falls back to the current colour.</summary>
@@ -241,15 +265,15 @@ public partial class SettingsWindow : Window
             return;
         }
 
-        TintHexBox.Text = _settings.TintColor;
+        TintHexBox.Text = _settings.TintEnabled ? _settings.TintColor : "清底";
         if (string.Equals(normalized, _settings.TintColor, StringComparison.OrdinalIgnoreCase))
         {
             return;
         }
 
+        _settings.TintEnabled = true;
         _settings.TintColor = normalized;
-        TintHexBox.Text = normalized;
-        UpdateTintSwatchSelection();
+        SyncTintControls();
         ScheduleApply();
     }
 
@@ -260,10 +284,12 @@ public partial class SettingsWindow : Window
         var idle = new SolidColorBrush(Color.FromArgb(0x40, 0xFF, 0xFF, 0xFF));
         var current = _settings.TintColor;
 
-        foreach (var swatch in new[] { TintDark, TintGray, TintSilver, TintWhite, TintBlue, TintViolet })
+        foreach (var swatch in new[] { TintClear, TintDark, TintGray, TintSilver, TintWhite, TintBlue, TintViolet })
         {
-            var isActive = swatch.Tag is string hex &&
-                           string.Equals(hex, current, StringComparison.OrdinalIgnoreCase);
+            var tag = swatch.Tag as string;
+            var isActive = tag == ClearTintTag
+                ? !_settings.TintEnabled
+                : _settings.TintEnabled && string.Equals(tag, current, StringComparison.OrdinalIgnoreCase);
             swatch.BorderBrush = isActive ? accent : idle;
             swatch.BorderThickness = new Thickness(isActive ? 2 : 1);
         }
@@ -337,7 +363,7 @@ public partial class SettingsWindow : Window
             AutoHideToggle.IsChecked = settings.AutoHideEnabled;
             ShadowToggle.IsChecked = settings.ShadowEnabled;
             ReflectionToggle.IsChecked = settings.IconReflection;
-            TintHexBox.Text = settings.TintColor;
+            SyncTintControls();
             UpdateTintSwatchSelection();
             FullscreenToggle.IsChecked = settings.HideOnFullscreen;
             HideTaskbarToggle.IsChecked = settings.HideSystemTaskbar;

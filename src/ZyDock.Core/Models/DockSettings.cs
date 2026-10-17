@@ -32,6 +32,9 @@ public sealed class DockSettings
     /// <summary>Space between the capsule edge and the icons, top and bottom.</summary>
     public double PaddingVertical { get; set; } = 18;
 
+    /// <summary>When false the plate has no colour wash at all ("清底"): only rim, highlights and shadow remain, and the desktop behind shows through unchanged.</summary>
+    public bool TintEnabled { get; set; } = true;
+
     /// <summary>Colour of the glass wash, "#RRGGBB". Dark = smoked glass, light = clear glass.</summary>
     public string TintColor { get; set; } = DefaultTint;
 
@@ -89,6 +92,7 @@ public sealed class DockSettings
             EdgeOffset = EdgeOffset,
             GlassEnabled = GlassEnabled,
             BorderThickness = BorderThickness,
+            TintEnabled = TintEnabled,
             TintColor = TintColor,
             ShadowEnabled = ShadowEnabled,
             IconReflection = IconReflection,
