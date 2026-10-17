@@ -50,8 +50,21 @@ internal static class GlassRenderer
         // The user can switch it off to get a completely flat panel.
         if (spec.Shadow)
         {
-            AddShadow(root, plateWidth, plateHeight, radius, margin * scale, 22 * scale, 80, 6 * scale);
-            AddShadow(root, plateWidth, plateHeight, radius, margin * scale, 7 * scale, 54, 2 * scale);
+            // The plate interior is transparent, so a blurred shadow drawn underneath it shows
+            // through and stains the dock grey on bright desktops (the "why is the background
+            // dark on white" report). Both shadow layers therefore live in a layer that is
+            // clipped to everything EXCEPT the capsule: the shadow only ever exists outside it.
+            var shadowLayer = new Canvas { Width = width, Height = height };
+
+            AddShadow(shadowLayer, plateWidth, plateHeight, radius, margin * scale, 22 * scale, 80, 6 * scale);
+            AddShadow(shadowLayer, plateWidth, plateHeight, radius, margin * scale, 7 * scale, 54, 2 * scale);
+
+            shadowLayer.Clip = new CombinedGeometry(
+                GeometryCombineMode.Exclude,
+                new RectangleGeometry(new Rect(0, 0, width, height)),
+                new RectangleGeometry(new Rect(margin * scale, margin * scale, plateWidth, plateHeight), radius, radius));
+
+            root.Children.Add(shadowLayer);
         }
 
         var plate = new Grid

@@ -140,6 +140,29 @@ public partial class DockWindow : Window
     private int _iconPixelSize;
 
     /// <summary>
+    /// Halves a bitmap with a plain linear filter. Exact 2:1 halving is a box filter, which keeps
+    /// more edge contrast than one large downscale pass.
+    /// </summary>
+    private static System.Windows.Media.Imaging.BitmapSource Halve(System.Windows.Media.Imaging.BitmapSource source)
+    {
+        var width = Math.Max(1, source.PixelWidth / 2);
+        var height = Math.Max(1, source.PixelHeight / 2);
+
+        var visual = new DrawingVisual();
+        using (var dc = visual.RenderOpen())
+        {
+            RenderOptions.SetBitmapScalingMode(visual, BitmapScalingMode.Linear);
+            dc.DrawImage(source, new Rect(0, 0, width, height));
+        }
+
+        var target = new System.Windows.Media.Imaging.RenderTargetBitmap(
+            width, height, 96, 96, System.Windows.Media.PixelFormats.Pbgra32);
+        target.Render(visual);
+        target.Freeze();
+        return target;
+    }
+
+    /// <summary>
     /// Pre-renders an icon at exactly the device-pixel size it occupies on screen, so the resting
     /// dock blits it 1:1 with no resampling at all. The shell hands us a 256 px bitmap and the
     /// dock slot is ~69 px: doing that division once here, with Fant, is what actually looks
@@ -153,6 +176,19 @@ public partial class DockWindow : Window
         _iconPixelSize = pixels;
 
         source ??= FallbackIcons.Generic;
+
+        // Mipmap-style downscale: halve while the bitmap is still much larger than the slot, then
+        // finish with one Fant pass. Exact 2:1 halving is a box filter and keeps edges crisper
+        // than a single huge downscale.
+        if (source is System.Windows.Media.Imaging.BitmapSource bitmap)
+        {
+            while (bitmap.PixelWidth > pixels * 2 && bitmap.PixelWidth > 16)
+            {
+                bitmap = Halve(bitmap);
+            }
+
+            source = bitmap;
+        }
 
         // RenderTargetBitmap maps one drawing unit to `dpi / 96` pixels, so a visual drawn in a
         // `pixels`-unit square would only fill `pixels` of the bitmap's `pixels * scale`
