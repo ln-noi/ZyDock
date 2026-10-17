@@ -426,7 +426,8 @@ public partial class DockWindow : Window
                 _settings.BorderThickness,
                 _settings.ShadowEnabled,
                 ParseTint(_settings.TintColor),
-                _settings.TintEnabled);
+                _settings.TintEnabled,
+                _settings.SpecularStrength);
 
             var bitmap = GlassRenderer.Render(spec);
             PlateImage.Source = bitmap;

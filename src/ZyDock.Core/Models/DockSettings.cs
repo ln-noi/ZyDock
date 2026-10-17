@@ -44,6 +44,9 @@ public sealed class DockSettings
     /// <summary>Draw the soft shadow under the capsule.</summary>
     public bool ShadowEnabled { get; set; } = true;
 
+    /// <summary>Strength of the specular highlight on the top edge, 0 (invisible) to 1 (bright).</summary>
+    public double SpecularStrength { get; set; } = 0.65;
+
     /// <summary>Rim thickness in DIP; 0 = no border at all.</summary>
     public double BorderThickness { get; set; } = 1.0;
 
@@ -91,6 +94,7 @@ public sealed class DockSettings
             PanelOpacity = PanelOpacity,
             EdgeOffset = EdgeOffset,
             GlassEnabled = GlassEnabled,
+            SpecularStrength = SpecularStrength,
             BorderThickness = BorderThickness,
             TintEnabled = TintEnabled,
             TintColor = TintColor,
@@ -120,6 +124,7 @@ public sealed class DockSettings
         PanelOpacity = Math.Round(Clamp(PanelOpacity, 0.05, 0.92), 3);
         EdgeOffset = Math.Round(Clamp(EdgeOffset, 0, 64), 1);
         MagnifyFactor = Math.Round(Clamp(MagnifyFactor, 1.0, 1.9), 2);
+        SpecularStrength = Math.Round(Clamp(SpecularStrength, 0, 1), 2);
         BorderThickness = Math.Round(Clamp(BorderThickness, 0, 3), 2);
         TintColor = NormalizeColor(TintColor);
         PaddingHorizontal = Math.Round(Clamp(PaddingHorizontal, 0, 80), 0);

@@ -141,6 +141,20 @@ public partial class SettingsWindow : Window
             ScheduleApply();
         };
 
+        SpecularSlider.ValueChanged += (_, _) =>
+        {
+            if (_suppress)
+            {
+                return;
+            }
+
+            _settings.SpecularStrength = Math.Round(SpecularSlider.Value, 2);
+            SpecularValue.Text = _settings.SpecularStrength <= 0.01
+                ? "关闭"
+                : $"{_settings.SpecularStrength * 100:0}%";
+            ScheduleApply();
+        };
+
         MagnifySlider.ValueChanged += (_, _) =>
         {
             if (_suppress)
@@ -341,6 +355,8 @@ public partial class SettingsWindow : Window
             OpacitySlider.Value = settings.PanelOpacity;
             MagnifySlider.Value = settings.MagnifyFactor;
             BorderSlider.Value = settings.BorderThickness;
+            SpecularSlider.Value = settings.SpecularStrength;
+            SpecularValue.Text = settings.SpecularStrength <= 0.01 ? "关闭" : $"{settings.SpecularStrength * 100:0}%";
             PaddingXSlider.Value = settings.PaddingHorizontal;
             PaddingYSlider.Value = settings.PaddingVertical;
             EdgeOffsetSlider.Value = settings.EdgeOffset;

@@ -18,7 +18,8 @@ internal sealed record PlateSpec(
     double BorderThickness,
     bool Shadow,
     Color Tint,
-    bool TintEnabled);
+    bool TintEnabled,
+    double SpecularStrength);
 
 /// <summary>
 /// Renders the dock backplate as **clear glass**: a nearly transparent capsule defined by a
@@ -159,7 +160,8 @@ internal static class GlassRenderer
                 EndPoint = new Point(1, 0),
             };
             specularFill.GradientStops.Add(new GradientStop(Color.FromArgb(0, 255, 255, 255), 0));
-            specularFill.GradientStops.Add(new GradientStop(Color.FromArgb(130, 255, 255, 255), 0.5));
+            var peak = (byte)Math.Clamp(Math.Round(255 * Math.Clamp(spec.SpecularStrength, 0, 1)), 0, 255);
+            specularFill.GradientStops.Add(new GradientStop(Color.FromArgb(peak, 255, 255, 255), 0.5));
             specularFill.GradientStops.Add(new GradientStop(Color.FromArgb(0, 255, 255, 255), 1));
 
             var specular = new Rectangle
@@ -207,9 +209,12 @@ internal static class GlassRenderer
                 StartPoint = new Point(0.5, 0),
                 EndPoint = new Point(0.5, 1),
             };
-            stroke.GradientStops.Add(new GradientStop(Color.FromArgb(104, 255, 255, 255), 0));
-            stroke.GradientStops.Add(new GradientStop(Color.FromArgb(30, 255, 255, 255), 0.55));
-            stroke.GradientStops.Add(new GradientStop(Color.FromArgb(48, 255, 255, 255), 1));
+            // The slider drives the rim highlight as well as the thin specular segment, so
+            // dragging it to zero removes the whole "glass catches the light" cue.
+            var rimLight = 0.30 + 0.70 * Math.Clamp(spec.SpecularStrength, 0, 1);
+            stroke.GradientStops.Add(new GradientStop(Color.FromArgb((byte)Math.Round(104 * rimLight), 255, 255, 255), 0));
+            stroke.GradientStops.Add(new GradientStop(Color.FromArgb((byte)Math.Round(30 * rimLight), 255, 255, 255), 0.55));
+            stroke.GradientStops.Add(new GradientStop(Color.FromArgb((byte)Math.Round(48 * rimLight), 255, 255, 255), 1));
 
             var rim = new Rectangle
             {

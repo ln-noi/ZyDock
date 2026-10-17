@@ -186,6 +186,24 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <StackPanel>
+                                    <TextBlock Text="边缘反光" Style="{StaticResource LabelText}" />
+                                    <TextBlock Text="胶囊顶边那道细高光的强度，0 = 完全不显示" Style="{StaticResource HintText}" Margin="0,2,0,0" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                    <Slider x:Name="SpecularSlider" Style="{StaticResource FineSlider}" Width="190"
+                                            Minimum="0" Maximum="1" />
+                                    <TextBlock x:Name="SpecularValue" Style="{StaticResource ValueText}" Margin="12,0,0,0" />
+                                </StackPanel>
+                            </Grid>
+
+                            <Border Height="1" Background="#14FFFFFF" Margin="0,12" />
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
                                     <TextBlock Text="底部阴影" Style="{StaticResource LabelText}" />
                                     <TextBlock Text="胶囊下方的柔和投影，关掉后 Dock 完全平贴桌面" Style="{StaticResource HintText}" Margin="0,2,0,0" />
                                 </StackPanel>
