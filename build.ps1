@@ -15,8 +15,16 @@ if ($Clean) {
         Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
 }
 
-Invoke-Dotnet restore ZyDock.sln
-Invoke-Dotnet build ZyDock.sln -c $Configuration --no-restore -v minimal
+# Two footguns avoided here:
+#   1. a bare "-v minimal" is parsed by PowerShell as a parameter name, leaving "minimal"
+#      behind as a stray positional argument -> use "--verbosity minimal";
+#   2. Invoke-Dotnet takes ValueFromRemainingArguments, so "@('a','b')" would be passed as a
+#      SINGLE argument -> build the array in a variable and splat it.
+$restoreArgs = @('restore', 'ZyDock.sln')
+Invoke-Dotnet @restoreArgs
+
+$buildArgs = @('build', 'ZyDock.sln', '-c', $Configuration, '--no-restore', '--verbosity', 'minimal')
+Invoke-Dotnet @buildArgs
 
 Write-Host ""
 Write-Host "Build OK -> src\ZyDock.App\bin\$Configuration\net8.0-windows\ZyDock.exe" -ForegroundColor Green

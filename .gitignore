@@ -15,6 +15,11 @@ dist/
 *.dll
 *.pdb
 
+# -------------------------------------- local distribution copies (not source)
+# Built program copies that sit next to the sources; published via GitHub Releases.
+single-file/
+folder/
+说明.txt
 # ------------------------------------------------------- local toolchain (SDK)
 # Downloaded .NET 8 SDK + NuGet cache used to build this repo offline.
 .tools/
