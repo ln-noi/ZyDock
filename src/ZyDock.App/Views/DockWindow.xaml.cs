@@ -154,11 +154,17 @@ public partial class DockWindow : Window
 
         source ??= FallbackIcons.Generic;
 
+        // RenderTargetBitmap maps one drawing unit to `dpi / 96` pixels, so a visual drawn in a
+        // `pixels`-unit square would only fill `pixels` of the bitmap's `pixels * scale`
+        // device pixels - which is exactly what cropped the icons to two thirds. The drawing
+        // rect therefore has to be expressed in the visual's DIP units: pixels / scale.
+        var visualUnits = pixels / scale;
+
         var visual = new DrawingVisual();
         using (var dc = visual.RenderOpen())
         {
             RenderOptions.SetBitmapScalingMode(visual, BitmapScalingMode.HighQuality);
-            dc.DrawImage(source, new Rect(0, 0, pixels, pixels));
+            dc.DrawImage(source, new Rect(0, 0, visualUnits, visualUnits));
         }
 
         // The DPI is chosen so the bitmap reports a DIP size equal to the icon slot
