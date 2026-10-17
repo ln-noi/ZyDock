@@ -3,14 +3,20 @@ using System.Text;
 namespace ZyDock.App.Interop;
 
 /// <summary>
-/// 检测"是否有全屏应用占用了指定显示器"，用于让 Dock 在全屏时完全隐藏。
+/// 检测"前台窗口是否已经占满桌面"，用于让 Dock 自动让位。
 ///
-/// 判定标准是窗口覆盖显示器的**完整边界**（而不是工作区）：
-/// 仅仅"最大化"的窗口会停在任务栏上方，不会触发；真正全屏的游戏/视频/浏览器全屏才会。
+/// 判定标准是窗口覆盖显示器的**工作区**（rcWork，即任务栏上方那块区域）：
+///   · 全屏应用（游戏 / 视频 / 浏览器全屏）覆盖整个工作区 → 命中
+///   · 普通最大化的窗口也正好覆盖工作区 → 命中
+///   · 普通窗口（含本程序的设置窗口）不覆盖 → 不命中
+/// 桌面、任务栏、Shell 表面等系统窗口会被排除。
 /// </summary>
-internal static class FullscreenWatcher
+internal static class WindowCoverageWatcher
 {
     private const uint MonitorDefaultToNearest = 2;
+
+    /// <summary>允许的像素误差（DWM 边框、阴影、取整）。</summary>
+    private const int Tolerance = 4;
 
     private static readonly string[] ShellClasses =
     [
@@ -23,8 +29,8 @@ internal static class FullscreenWatcher
 
     private static readonly StringBuilder ClassBuffer = new(256);
 
-    /// <summary>前台窗口是否为该显示器上的全屏窗口。</summary>
-    public static bool IsFullscreenOn(IntPtr monitorHandle, IntPtr ownWindow)
+    /// <summary>前台窗口是否最大化/全屏地占满了该显示器的工作区。</summary>
+    public static bool CoversDesktop(IntPtr monitorHandle, IntPtr ownWindow)
     {
         try
         {
@@ -39,7 +45,7 @@ internal static class FullscreenWatcher
                 return false;
             }
 
-            // 桌面 / 任务栏 / Shell 表面不算"应用"。
+            // 桌面 / 任务栏 / Shell 表面不算"应用窗口"。
             ClassBuffer.Clear();
             var length = NativeMethods.GetClassNameW(foreground, ClassBuffer, ClassBuffer.Capacity);
             if (length > 0)
@@ -59,7 +65,7 @@ internal static class FullscreenWatcher
                 return false;
             }
 
-            // 只关心"Dock 所在的那块屏幕"上的全屏应用。
+            // 只关心 Dock 所在的那块屏幕。
             var monitor = NativeMethods.MonitorFromWindow(foreground, MonitorDefaultToNearest);
             if (monitor == IntPtr.Zero)
             {
@@ -81,13 +87,12 @@ internal static class FullscreenWatcher
                 return false;
             }
 
-            const int tolerance = 2;
-            var target = info.rcMonitor;
+            var target = info.rcWork;
 
-            return rect.Left <= target.Left + tolerance
-                && rect.Top <= target.Top + tolerance
-                && rect.Right >= target.Right - tolerance
-                && rect.Bottom >= target.Bottom - tolerance;
+            return rect.Left <= target.Left + Tolerance
+                && rect.Top <= target.Top + Tolerance
+                && rect.Right >= target.Right - Tolerance
+                && rect.Bottom >= target.Bottom - Tolerance;
         }
         catch
         {

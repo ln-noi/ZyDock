@@ -395,8 +395,8 @@ public partial class DockWindow : Window
     }
 
     /// <summary>
-    /// Hides the dock while a fullscreen app owns this monitor (games, video players, browser
-    /// fullscreen) and brings it back when that app goes away.
+    /// Hides the dock while the foreground window is maximized or fullscreen on this monitor
+    /// (games, video players, browser fullscreen, any maximized window) and brings it back afterwards.
     /// </summary>
     private void EvaluateFullscreen()
     {
@@ -421,7 +421,7 @@ public partial class DockWindow : Window
             return;
         }
 
-        var fullscreen = FullscreenWatcher.IsFullscreenOn(Displays.MonitorOf(handle), handle);
+        var fullscreen = WindowCoverageWatcher.CoversDesktop(Displays.MonitorOf(handle), handle);
 
         if (fullscreen && !_fullscreenHidden)
         {
@@ -436,7 +436,7 @@ public partial class DockWindow : Window
     private void EnterFullscreen()
     {
         _fullscreenHidden = true;
-        Log.Info("检测到全屏应用，Dock 已自动隐藏（退出全屏后恢复）。");
+        Log.Info("前台窗口已最大化/全屏，Dock 已自动隐藏（还原窗口后恢复）。");
 
         try
         {
@@ -453,7 +453,7 @@ public partial class DockWindow : Window
     private void LeaveFullscreen()
     {
         _fullscreenHidden = false;
-        Log.Info("全屏应用已退出，Dock 恢复显示。");
+        Log.Info("前台窗口已还原，Dock 恢复显示。");
 
         try
         {

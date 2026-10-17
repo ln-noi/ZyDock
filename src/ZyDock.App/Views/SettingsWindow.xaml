@@ -270,8 +270,8 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <StackPanel>
-                                    <TextBlock Text="全屏时自动隐藏" Style="{StaticResource LabelText}" />
-                                    <TextBlock Text="有全屏应用（游戏 / 视频 / 浏览器全屏）时 Dock 完全隐藏，退出全屏后自动恢复" Style="{StaticResource HintText}" Margin="0,2,0,0" />
+                                    <TextBlock Text="最大化/全屏时自动隐藏" Style="{StaticResource LabelText}" />
+                                    <TextBlock Text="前台窗口最大化或全屏时 Dock 完全隐藏（任何软件都算），还原窗口后自动恢复" Style="{StaticResource HintText}" Margin="0,2,0,0" />
                                 </StackPanel>
                                 <ToggleButton x:Name="FullscreenToggle" Grid.Column="1" Style="{StaticResource ToggleSwitch}" />
                             </Grid>
