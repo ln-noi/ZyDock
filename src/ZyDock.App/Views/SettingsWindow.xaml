@@ -82,11 +82,11 @@
                                 </Grid.ColumnDefinitions>
                                 <StackPanel>
                                     <TextBlock Text="图标大小" Style="{StaticResource LabelText}" />
-                                    <TextBlock Text="磁吸放大后依然清晰，建议 44 - 50" Style="{StaticResource HintText}" Margin="0,2,0,0" />
+                                    <TextBlock Text="磁吸放大后依然清晰，建议 50 - 60" Style="{StaticResource HintText}" Margin="0,2,0,0" />
                                 </StackPanel>
                                 <StackPanel Grid.Column="1" Orientation="Horizontal">
                                     <Slider x:Name="IconSizeSlider" Style="{StaticResource FineSlider}" Width="190"
-                                            Minimum="30" Maximum="68" IsSnapToTickEnabled="True" TickFrequency="1" />
+                                            Minimum="32" Maximum="80" IsSnapToTickEnabled="True" TickFrequency="1" />
                                     <TextBlock x:Name="IconSizeValue" Style="{StaticResource ValueText}" Margin="12,0,0,0" />
                                 </StackPanel>
                             </Grid>

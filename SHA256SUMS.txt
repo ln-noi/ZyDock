@@ -14,6 +14,6 @@
 #
 # Hashes prove the file matches this list; they do not prove authorship.
 # Only a signed artifact (code signing / attestation) proves who built it.
-0cf9480d9e7305e51a6c5e65fd2c7a1cb08fb861da016fe86318ba36245f97bb  ZyDock-1.0.0-single-file.exe
-c5d3d80e3f407f1a75d7e33dbee931841a834373797879ea728c0a9d3fdb1055  ZyDock-1.0.0-single-file.zip
-bfe684bdd31c07dde91be923c230c32e913b9eb13cdc32a22034312fa50584a9  ZyDock-1.0.0-folder.zip
+189ccf16e2049cfb10d0451f1d3393190bf69724e7c8e8a629f7e69b0013f5b0  ZyDock-1.0.0-single-file.exe
+d8faca8d50fe5c17bc1f832f4bbda3a3cc81f0f27b0fad9f660ca11b7b6efdcc  ZyDock-1.0.0-single-file.zip
+462569b9f00fa600fc0a9603cb556e40c9ab61a2ce4819eaabd6a0b0ed0d3724  ZyDock-1.0.0-folder.zip

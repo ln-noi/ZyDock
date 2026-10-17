@@ -136,6 +136,42 @@ public partial class DockWindow : Window
         EvaluateFullscreen();
     }
 
+    /// <summary>Integer device-pixel size the icon bitmaps were pre-rendered at.</summary>
+    private int _iconPixelSize;
+
+    /// <summary>
+    /// Pre-renders an icon at exactly the device-pixel size it occupies on screen, so the resting
+    /// dock blits it 1:1 with no resampling at all. The shell hands us a 256 px bitmap and the
+    /// dock slot is ~69 px: doing that division once here, with Fant, is what actually looks
+    /// crisp. A BitmapCache cannot do this because it is resampled again by the compositor.
+    /// </summary>
+    private System.Windows.Media.Imaging.BitmapSource RenderIconForPixelSize(ImageSource? source)
+    {
+        var scale = _scale <= 0 ? 1.0 : _scale;
+        var iconDip = _layout?.IconSize is > 1 ? _layout.IconSize : _settings.IconSize;
+        var pixels = Math.Max(8, (int)Math.Round(iconDip * scale));
+        _iconPixelSize = pixels;
+
+        source ??= FallbackIcons.Generic;
+
+        var visual = new DrawingVisual();
+        using (var dc = visual.RenderOpen())
+        {
+            RenderOptions.SetBitmapScalingMode(visual, BitmapScalingMode.HighQuality);
+            dc.DrawImage(source, new Rect(0, 0, pixels, pixels));
+        }
+
+        // The DPI is chosen so the bitmap reports a DIP size equal to the icon slot
+        // (pixels / scale == iconDip). That turns the draw into a 1:1 device-pixel blit
+        // instead of yet another resample.
+        var dpi = 96.0 * scale;
+        var target = new System.Windows.Media.Imaging.RenderTargetBitmap(
+            pixels, pixels, dpi, dpi, System.Windows.Media.PixelFormats.Pbgra32);
+        target.Render(visual);
+        target.Freeze();
+        return target;
+    }
+
     private void RebuildItems()
     {
         ItemLayer.Children.Clear();
@@ -147,7 +183,7 @@ public partial class DockWindow : Window
             var scaleTransform = new ScaleTransform(1, 1);
             var image = new Image
             {
-                Source = _icons.GetIcon(item),
+                Source = RenderIconForPixelSize(_icons.GetIcon(item)),
                 Stretch = Stretch.Uniform,
                 SnapsToDevicePixels = true,
                 UseLayoutRounding = true,
@@ -161,10 +197,11 @@ public partial class DockWindow : Window
 
             // The cache has to live on the Image, not on the host Grid: a BitmapCache rasterises
             // only the element bounds, which would clip the reflection that overflows below.
-            // Cache at 1:1 with the displayed size. Caching at the *magnified* size made WPF
-            // downsample a larger bitmap to the resting size, which is what looked slightly
-            // soft at rest; 1:1 keeps the resting icons pixel-crisp.
-            image.CacheMode = new BitmapCache(1.0);
+            // No BitmapCache on purpose. A cache is a fixed-resolution bitmap that has to be
+            // resampled to the physical pixel grid every frame, and that resample is exactly
+            // what makes a 256 px icon look soft sitting in a 69 px slot. Letting WPF resample
+            // the original 256 px bitmap with Fant each frame keeps the edges genuinely sharp;
+            // the icons are small so the cost is a handful of cached image draws.
 
             var host = new Grid
             {

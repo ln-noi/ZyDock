@@ -15,7 +15,7 @@ public sealed class DockSettings
     public int SchemaVersion { get; set; } = CurrentSchemaVersion;
 
     /// <summary>Icon edge length in device independent pixels.</summary>
-    public double IconSize { get; set; } = 46;
+    public double IconSize { get; set; } = 52;
 
     /// <summary>Gap between two icons, in device independent pixels.</summary>
     public double IconSpacing { get; set; } = 10;
@@ -115,7 +115,7 @@ public sealed class DockSettings
     /// <summary>Forces every value back into a safe, renderable range.</summary>
     public DockSettings Clamp()
     {
-        IconSize = Math.Round(Clamp(IconSize, 30, 68), 1);
+        IconSize = Math.Round(Clamp(IconSize, 32, 80), 1);
         IconSpacing = Math.Round(Clamp(IconSpacing, 2, 24), 1);
         PanelOpacity = Math.Round(Clamp(PanelOpacity, 0.05, 0.92), 3);
         EdgeOffset = Math.Round(Clamp(EdgeOffset, 0, 64), 1);
