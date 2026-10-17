@@ -245,7 +245,7 @@ public partial class App : Application
                 new("从 Dock 移除", () => RemoveItem(item), IsChecked: false, IsSeparator: false, IsDanger: true),
             };
 
-            PopupMenuWindow.ShowAt(screenPoint, items);
+            PopupMenuWindow.ShowAt(screenPoint, items, _dock?.PlateTopPixels ?? 0);
         }
         catch (Exception ex)
         {
@@ -323,7 +323,7 @@ public partial class App : Application
         try
         {
             var items = BuildMainMenu();
-            PopupMenuWindow.ShowAt(screenPoint, items);
+            PopupMenuWindow.ShowAt(screenPoint, items, _dock?.PlateTopPixels ?? 0);
         }
         catch (Exception ex)
         {

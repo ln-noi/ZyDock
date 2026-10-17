@@ -62,7 +62,7 @@ internal sealed class PopupMenuWindow : Window
         MinWidth = 168;
     }
 
-    public static void ShowAt(Point screenPixels, IReadOnlyList<PopupMenuItem> items)
+    public static void ShowAt(Point screenPixels, IReadOnlyList<PopupMenuItem> items, int keepAbovePixels = 0)
     {
         try
         {
@@ -77,6 +77,7 @@ internal sealed class PopupMenuWindow : Window
 
             window._shownAt = DateTime.UtcNow;
             window._anchor = screenPixels;
+            window._keepAbove = keepAbovePixels;
 
             // SizeToContent can still resize the window after the first placement; re-clamp so it
             // can never end up partially off-screen.
@@ -122,6 +123,9 @@ internal sealed class PopupMenuWindow : Window
 
     /// <summary>Anchor (physical px) to clamp against; kept so a late size change can re-place.</summary>
     private Point _anchor;
+
+    /// <summary>Physical Y the menu bottom must stay above (the dock capsule top); 0 = unused.</summary>
+    private int _keepAbove;
     private int _placedWidth;
     private int _placedHeight;
 
@@ -174,8 +178,16 @@ internal sealed class PopupMenuWindow : Window
         var x = (int)Math.Round(screenPixels.X);
         var y = (int)Math.Round(screenPixels.Y);
 
+        // The menu must never cover the dock itself nor the taskbar it sits on, so the callers
+        // that anchor on the dock pass the capsule's top edge as a hard lower bound.
+        var bottomLimit = workBottom - 4;
+        if (_keepAbove > 0)
+        {
+            bottomLimit = Math.Min(bottomLimit, _keepAbove - 2);
+        }
+
         // Open above the cursor when the menu does not fit below it (the usual case for a dock).
-        if (y + height > workBottom - 4)
+        if (y + height > bottomLimit)
         {
             y -= height + 4;
         }
@@ -188,10 +200,10 @@ internal sealed class PopupMenuWindow : Window
         x = Math.Max(workLeft + 4, x);
         y = Math.Max(workTop + 4, y);
 
-        // Still too tall for the work area: pin to the top so the first entries stay reachable.
-        if (y + height > workBottom - 4)
+        // Still too tall for the available space: pin it so the first entries stay reachable.
+        if (y + height > bottomLimit)
         {
-            y = Math.Max(workTop + 4, workBottom - height - 4);
+            y = Math.Max(workTop + 4, bottomLimit - height);
         }
 
         NativeMethods.SetWindowPos(
@@ -202,6 +214,40 @@ internal sealed class PopupMenuWindow : Window
             0,
             0,
             NativeMethods.SWP_NOSIZE | NativeMethods.SWP_SHOWWINDOW);
+
+        // Verify what actually landed on screen and correct once: SizeToContent can still change
+        // the window after the first placement, and a menu that covers the dock or the taskbar is
+        // exactly the bug this guards against.
+        if (NativeMethods.GetWindowRect(handle, out var placed))
+        {
+            var placedWidth = placed.Right - placed.Left;
+            var placedHeight = placed.Bottom - placed.Top;
+            var needsFix = placed.Bottom > bottomLimit + 1
+                           || placed.Top < workTop
+                           || placed.Right > workRight + 1
+                           || placed.Left < workLeft;
+
+            if (needsFix)
+            {
+                var fixedY = Math.Max(workTop + 4, bottomLimit - placedHeight);
+                var fixedX = Math.Max(workLeft + 4, Math.Min(x, workRight - placedWidth - 4));
+
+                NativeMethods.SetWindowPos(
+                    handle,
+                    NativeMethods.HWND_TOPMOST,
+                    fixedX,
+                    fixedY,
+                    0,
+                    0,
+                    NativeMethods.SWP_NOSIZE | NativeMethods.SWP_SHOWWINDOW);
+
+                x = fixedX;
+                y = fixedY;
+            }
+
+            Log.Info($"[menu] anchor=({(int)screenPixels.X},{(int)screenPixels.Y}) keepAbove={_keepAbove} " +
+                     $"size={placedWidth}x{placedHeight} -> ({x},{y}) work=({workLeft},{workTop})-({workRight},{workBottom})");
+        }
     }
 
     private UIElement CreateRow(PopupMenuItem item)

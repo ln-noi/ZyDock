@@ -107,6 +107,25 @@ public partial class DockWindow : Window
     /// <summary>Icons were reordered by dragging inside the dock (new display order).</summary>
     internal event Action<IReadOnlyList<DockItem>>? ItemsReordered;
 
+    /// <summary>
+    /// Top edge of the capsule in physical screen pixels. Menus anchored on the dock use it as a
+    /// hard upper bound so they open above the capsule instead of covering the taskbar.
+    /// </summary>
+internal int PlateTopPixels
+    {
+        get
+        {
+            // Query the live window rect: menus are opened long after the layout settled, and a
+            // stale cached rect here would silently disable the "stay above the dock" bound.
+            if (_source is not null && NativeMethods.GetWindowRect(_source.Handle, out var rect))
+            {
+                return rect.Top + (int)Math.Round(_layout.PlateTop * _scale);
+            }
+
+            return _desiredPx.Top + (int)Math.Round(_layout.PlateTop * _scale);
+        }
+    }
+
     internal DockSettings Settings => _settings;
 
     internal DockLayout Layout => _layout;
