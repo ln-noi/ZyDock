@@ -112,12 +112,22 @@ internal static class WindowCoverageWatcher
                 return true;
             }
 
-            return Covers(rect, info.rcMonitor);
+            if (Covers(rect, info.rcMonitor))
+            {
+                return true;
+            }
+
+            // 3) Split screen: neither window covers everything on its own, but together they do.
+            //    Cover the monitor with a coarse grid and count the cells touched by any visible,
+            //    non-minimized top-level window of another process.
+            return IsScreenCoveredByWindows(info.rcMonitor, ownWindow, info);
         }
         catch
         {
             return false;
         }
+
+
 
         static bool Covers(NativeMethods.RECT window, NativeMethods.RECT target)
         {
@@ -126,5 +136,121 @@ internal static class WindowCoverageWatcher
                 && window.Right >= target.Right - Tolerance
                 && window.Bottom >= target.Bottom - Tolerance;
         }
+    }
+
+
+    /// <summary>
+    /// True when visible application windows together cover (almost) the whole monitor: what
+    /// two snapped windows look like. Neither is maximized or fullscreen, so the per-window
+    /// tests above miss that case entirely.
+    /// </summary>
+    private static bool IsScreenCoveredByWindows(NativeMethods.RECT monitor, IntPtr ownWindow, NativeMethods.MONITORINFOEX info)
+    {
+        const int columns = 24;
+        const int rows = 18;
+        const double threshold = 0.92;
+
+        var width = monitor.Right - monitor.Left;
+        var height = monitor.Bottom - monitor.Top;
+        if (width <= 0 || height <= 0)
+        {
+            return false;
+        }
+
+        var cellWidth = (double)width / columns;
+        var cellHeight = (double)height / rows;
+        var covered = new bool[columns * rows];
+        var any = false;
+        var ownPid = (uint)Environment.ProcessId;
+
+        NativeMethods.EnumWindows((hwnd, _) =>
+        {
+            if (hwnd == ownWindow || !NativeMethods.IsWindowVisible(hwnd) || NativeMethods.IsIconic(hwnd))
+            {
+                return true;
+            }
+
+            if (NativeMethods.GetWindowThreadProcessId(hwnd, out var pid) == 0 || pid == ownPid)
+            {
+                return true;
+            }
+
+            // Tool windows, popups and shell surfaces are not "the app the user is working in".
+            var exStyle = NativeMethods.GetWindowLongPtr(hwnd, NativeMethods.GWL_EXSTYLE).ToInt64();
+            const long wsExToolWindow = 0x00000080L;
+            if ((exStyle & wsExToolWindow) != 0)
+            {
+                return true;
+            }
+
+            const int dwmwaCloaked = 14;
+            if (NativeMethods.DwmGetWindowAttribute(hwnd, dwmwaCloaked, out var cloaked, sizeof(int)) == 0 && cloaked != 0)
+            {
+                return true;
+            }
+
+            ClassBuffer.Clear();
+            var length = NativeMethods.GetClassNameW(hwnd, ClassBuffer, ClassBuffer.Capacity);
+            if (length > 0)
+            {
+                var name = ClassBuffer.ToString();
+                foreach (var shellClass in ShellClasses)
+                {
+                    if (string.Equals(name, shellClass, StringComparison.Ordinal))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            if (!NativeMethods.GetWindowRect(hwnd, out var rect))
+            {
+                return true;
+            }
+
+            // Ignore tiny overlays (toolbars, toasts) so they never count as coverage.
+            var left = Math.Max(rect.Left, monitor.Left);
+            var top = Math.Max(rect.Top, monitor.Top);
+            var right = Math.Min(rect.Right, monitor.Right);
+            var bottom = Math.Min(rect.Bottom, monitor.Bottom);
+            if (right - left < width / 8 || bottom - top < height / 8)
+            {
+                return true;
+            }
+
+            any = true;
+
+            var fromColumn = Math.Max(0, (int)Math.Floor((left - monitor.Left) / cellWidth));
+            var toColumn = Math.Min(columns - 1, (int)Math.Ceiling((right - monitor.Left) / cellWidth) - 1);
+            var fromRow = Math.Max(0, (int)Math.Floor((top - monitor.Top) / cellHeight));
+            var toRow = Math.Min(rows - 1, (int)Math.Ceiling((bottom - monitor.Top) / cellHeight) - 1);
+
+            for (var row = fromRow; row <= toRow; row++)
+            {
+                var cellRow = row * columns;
+                for (var column = fromColumn; column <= toColumn; column++)
+                {
+                    covered[cellRow + column] = true;
+                }
+            }
+
+            return true;
+        }, IntPtr.Zero);
+
+        if (!any)
+        {
+            return false;
+        }
+
+        var hit = 0;
+        foreach (var cell in covered)
+        {
+            if (cell)
+            {
+                hit++;
+            }
+        }
+
+        return (double)hit / covered.Length >= threshold;
     }
 }
