@@ -28,6 +28,12 @@ internal sealed class DockLayout
     /// <summary>Space between the capsule edge and the icons, top and bottom.</summary>
     public double PaddingY { get; init; }
 
+    /// <summary>Height of the mirrored reflection drawn under each icon (0 = none).</summary>
+    public double ReflectionHeight { get; init; }
+
+    /// <summary>Gap between an icon and its reflection, in DIP.</summary>
+    public const double ReflectionGap = 2.0;
+
     public int Count { get; init; }
 
     public double MaxExtra { get; init; }
@@ -64,14 +70,21 @@ internal sealed class DockLayout
         bool magnify,
         bool labels,
         double paddingX = DefaultPadHorizontal,
-        double paddingY = DefaultPadVertical)
+        double paddingY = DefaultPadVertical,
+        double reflectionHeight = 0)
     {
         count = Math.Max(1, count);
         paddingX = Math.Max(0, paddingX);
         paddingY = Math.Max(0, paddingY);
 
         var plateWidth = count * iconSize + (count - 1) * spacing + paddingX * 2;
-        var plateHeight = iconSize + paddingY * 2;
+
+        // The icon and its reflection form one visual block: the capsule grows by the reflection
+        // height, and the block sits centred in it, so the padding above the icons and below the
+        // reflection stays identical instead of the reflection crowding the bottom edge.
+        reflectionHeight = Math.Max(0, reflectionHeight);
+        var blockHeight = iconSize + (reflectionHeight > 0.5 ? ReflectionGap + reflectionHeight : 0);
+        var plateHeight = blockHeight + paddingY * 2;
         var radius = plateHeight / 2.0;
 
         var maxExtra = magnify ? iconSize * (magnifyFactor - 1.0) : 0.0;
@@ -98,6 +111,7 @@ internal sealed class DockLayout
             WindowHeight = windowHeight,
             PlateLeft = margin,
             PlateTop = headroom,
+            ReflectionHeight = reflectionHeight,
             ItemsTop = headroom + paddingY,
             ChipTop = headroom + paddingY - maxExtra - chipHeight - 10,
             DotTop = headroom + plateHeight - 6.5,

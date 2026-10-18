@@ -331,7 +331,8 @@ internal int PlateTopPixels
             _settings.MagnifyEnabled,
             _settings.ShowLabels,
             _settings.PaddingHorizontal,
-            _settings.PaddingVertical);
+            _settings.PaddingVertical,
+            ReflectionHeightFor(iconSize));
 
         Width = _layout.WindowWidth;
         Height = _layout.WindowHeight;
@@ -478,6 +479,21 @@ internal int PlateTopPixels
     /// Builds a mirrored, fading copy of the icon that sits just below it ("拖影"/reflection).
     /// It lives inside the icon host, so it follows the magnification transform for free.
     /// </summary>
+    /// <summary>
+    /// Height the reflection will occupy under one icon. The layout uses the same formula as the
+    /// renderer so the capsule is sized around "icon + reflection" as a single block.
+    /// </summary>
+    private double ReflectionHeightFor(double iconSize)
+    {
+        if (!_settings.IconReflection)
+        {
+            return 0;
+        }
+
+        var height = iconSize * 0.30 * Math.Clamp(_settings.ReflectionSize, 0, 1.6);
+        return height < 2 ? 0 : height;
+    }
+
     private static UIElement? CreateReflection(
         ImageSource? source,
         double iconSize,
@@ -534,7 +550,7 @@ internal int PlateTopPixels
         RenderOptions.SetBitmapScalingMode(reflection, BitmapScalingMode.HighQuality);
 
         Canvas.SetLeft(reflection, 0);
-        Canvas.SetTop(reflection, iconSize + 2);
+        Canvas.SetTop(reflection, iconSize + DockLayout.ReflectionGap);
         layer.Children.Add(reflection);
 
         return layer;
