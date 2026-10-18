@@ -383,4 +383,71 @@
         </Setter>
     </Style>
 
+    <!-- ===================== collapsible settings group ===================== -->
+    <Style x:Key="SettingsGroup" TargetType="Expander">
+        <Setter Property="IsExpanded" Value="True" />
+        <Setter Property="Margin" Value="0,0,0,2" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Expander">
+                    <StackPanel>
+                        <ToggleButton x:Name="Header"
+                                      Content="{TemplateBinding Header}"
+                                      HorizontalAlignment="Stretch"
+                                      HorizontalContentAlignment="Stretch"
+                                      Focusable="False"
+                                      Cursor="Hand"
+                                      FontFamily="{StaticResource UiFont}"
+                                      FontSize="12.5"
+                                      FontWeight="SemiBold"
+                                      Foreground="{StaticResource TextPrimaryBrush}">
+                            <ToggleButton.Template>
+                                <ControlTemplate TargetType="ToggleButton">
+                                    <Border x:Name="Bar"
+                                            CornerRadius="9"
+                                            Padding="10,8"
+                                            Background="#0CFFFFFF">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <ContentPresenter Grid.Column="0" VerticalAlignment="Center" />
+                                            <TextBlock x:Name="Chevron" Grid.Column="1"
+                                                       Text="▾"
+                                                       FontFamily="{StaticResource UiFont}"
+                                                       FontSize="11"
+                                                       VerticalAlignment="Center"
+                                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                                       RenderTransformOrigin="0.5,0.5" />
+                                        </Grid>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsChecked" Value="False">
+                                            <Setter TargetName="Chevron" Property="RenderTransform">
+                                                <Setter.Value>
+                                                    <RotateTransform Angle="-90" />
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Trigger>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="Bar" Property="Background" Value="#16FFFFFF" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </ToggleButton.Template>
+                        </ToggleButton>
+                        <ContentPresenter x:Name="Body" Visibility="Collapsed" Margin="2,6,2,10" />
+                    </StackPanel>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsExpanded" Value="True">
+                            <Setter TargetName="Body" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="Header" Property="IsChecked" Value="True" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 </ResourceDictionary>

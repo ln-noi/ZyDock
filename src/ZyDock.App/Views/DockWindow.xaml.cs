@@ -280,7 +280,12 @@ internal int PlateTopPixels
             // Faint mirrored reflection under the icon ("拖影"), off by default.
             if (_settings.IconReflection)
             {
-                var reflection = CreateReflection(image.Source, _settings.IconSize, _settings.ReflectionSize);
+                var reflection = CreateReflection(
+                    image.Source,
+                    _settings.IconSize,
+                    _settings.ReflectionSize,
+                    _settings.ReflectionWidth,
+                    _settings.ReflectionOpacity);
                 if (reflection is not null)
                 {
                     host.Children.Add(reflection);
@@ -474,7 +479,12 @@ internal int PlateTopPixels
     /// Builds a mirrored, fading copy of the icon that sits just below it ("拖影"/reflection).
     /// It lives inside the icon host, so it follows the magnification transform for free.
     /// </summary>
-    private static UIElement? CreateReflection(ImageSource? source, double iconSize, double sizeMultiplier)
+    private static UIElement? CreateReflection(
+        ImageSource? source,
+        double iconSize,
+        double sizeMultiplier,
+        double widthMultiplier,
+        double opacity)
     {
         // Base height is 30% of the icon; the "拖影大小" slider scales it (0 = off, 1.6 = large).
         var height = iconSize * 0.30 * Math.Clamp(sizeMultiplier, 0, 1.6);
@@ -497,11 +507,11 @@ internal int PlateTopPixels
             Source = source,
             Stretch = Stretch.Uniform,
             IsHitTestVisible = false,
-            Width = iconSize,
+            Width = iconSize * Math.Clamp(widthMultiplier, 0.3, 1.6),
             Height = height,
             RenderTransformOrigin = new Point(0.5, 0.5),
             RenderTransform = new ScaleTransform(1, -1),
-            Opacity = 0.20,
+            Opacity = Math.Clamp(opacity, 0, 0.6),
             OpacityMask = new LinearGradientBrush
             {
                 StartPoint = new Point(0.5, 0),
@@ -517,7 +527,9 @@ internal int PlateTopPixels
         };
 
         RenderOptions.SetBitmapScalingMode(reflection, BitmapScalingMode.LowQuality);
-        Canvas.SetLeft(reflection, 0);
+
+        // Centre the (possibly narrower) reflection under the icon.
+        Canvas.SetLeft(reflection, (iconSize - reflection.Width) / 2);
         Canvas.SetTop(reflection, iconSize + 2);
         layer.Children.Add(reflection);
 

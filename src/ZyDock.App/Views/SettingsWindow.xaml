@@ -75,282 +75,332 @@
                     <TextBlock Text="外观" Style="{StaticResource SectionText}" />
                     <Border Style="{StaticResource CardBorder}" Margin="0,0,0,16">
                         <StackPanel>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
+
+                            <Expander Style="{StaticResource SettingsGroup}" Header="图标">
                                 <StackPanel>
-                                    <TextBlock Text="图标大小" Style="{StaticResource LabelText}" />
-                                    <TextBlock Text="磁吸放大后依然清晰，建议 50 - 60" Style="{StaticResource HintText}" Margin="0,2,0,0" />
-                                </StackPanel>
-                                <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                    <Slider x:Name="IconSizeSlider" Style="{StaticResource FineSlider}" Width="190"
-                                            Minimum="32" Maximum="80" IsSnapToTickEnabled="True" TickFrequency="1" />
-                                    <TextBlock x:Name="IconSizeValue" Style="{StaticResource ValueText}" Margin="12,0,0,0" />
-                                </StackPanel>
-                            </Grid>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel>
+                                            <TextBlock Text="图标大小" Style="{StaticResource LabelText}" />
+                                            <TextBlock Text="磁吸放大后依然清晰，建议 50 - 60" Style="{StaticResource HintText}" Margin="0,2,0,0" />
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                            <Slider x:Name="IconSizeSlider" Style="{StaticResource FineSlider}" Width="190"
+                                                    Minimum="32" Maximum="80" IsSnapToTickEnabled="True" TickFrequency="1" />
+                                            <TextBlock x:Name="IconSizeValue" Style="{StaticResource ValueText}" Margin="12,0,0,0" />
+                                        </StackPanel>
+                                    </Grid>
 
-                            <Border Height="1" Background="#14FFFFFF" Margin="0,12" />
+                                    <Border Height="1" Background="#14FFFFFF" Margin="0,12" />
 
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel>
+                                            <TextBlock Text="图标间距" Style="{StaticResource LabelText}" />
+                                            <TextBlock Text="图标之间的呼吸空间" Style="{StaticResource HintText}" Margin="0,2,0,0" />
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                            <Slider x:Name="SpacingSlider" Style="{StaticResource FineSlider}" Width="190"
+                                                    Minimum="2" Maximum="24" IsSnapToTickEnabled="True" TickFrequency="1" />
+                                            <TextBlock x:Name="SpacingValue" Style="{StaticResource ValueText}" Margin="12,0,0,0" />
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <Border Height="1" Background="#14FFFFFF" Margin="0,12" />
+
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel>
+                                            <TextBlock Text="内边距（左右）" Style="{StaticResource LabelText}" />
+                                            <TextBlock Text="胶囊左右两侧到第一个/最后一个图标的留白" Style="{StaticResource HintText}" Margin="0,2,0,0" />
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                            <Slider x:Name="PaddingXSlider" Style="{StaticResource FineSlider}" Width="190"
+                                                    Minimum="0" Maximum="80" IsSnapToTickEnabled="True" TickFrequency="1" />
+                                            <TextBlock x:Name="PaddingXValue" Style="{StaticResource ValueText}" Margin="12,0,0,0" />
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <Border Height="1" Background="#14FFFFFF" Margin="0,12" />
+
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel>
+                                            <TextBlock Text="内边距（上下）" Style="{StaticResource LabelText}" />
+                                            <TextBlock Text="图标上下与胶囊边缘的留白" Style="{StaticResource HintText}" Margin="0,2,0,0" />
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                            <Slider x:Name="PaddingYSlider" Style="{StaticResource FineSlider}" Width="190"
+                                                    Minimum="0" Maximum="60" IsSnapToTickEnabled="True" TickFrequency="1" />
+                                            <TextBlock x:Name="PaddingYValue" Style="{StaticResource ValueText}" Margin="12,0,0,0" />
+                                        </StackPanel>
+                                    </Grid>
+                                </StackPanel>
+                            </Expander>
+
+                            <Expander Style="{StaticResource SettingsGroup}" Header="玻璃">
                                 <StackPanel>
-                                    <TextBlock Text="图标间距" Style="{StaticResource LabelText}" />
-                                    <TextBlock Text="图标之间的呼吸空间" Style="{StaticResource HintText}" Margin="0,2,0,0" />
-                                </StackPanel>
-                                <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                    <Slider x:Name="SpacingSlider" Style="{StaticResource FineSlider}" Width="190"
-                                            Minimum="2" Maximum="24" IsSnapToTickEnabled="True" TickFrequency="1" />
-                                    <TextBlock x:Name="SpacingValue" Style="{StaticResource ValueText}" Margin="12,0,0,0" />
-                                </StackPanel>
-                            </Grid>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel>
+                                            <TextBlock Text="背景透明度" Style="{StaticResource LabelText}" />
+                                            <TextBlock Text="越低越接近全透明，建议 20% – 35%" Style="{StaticResource HintText}" Margin="0,2,0,0" />
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                            <Slider x:Name="OpacitySlider" Style="{StaticResource FineSlider}" Width="190"
+                                                    Minimum="0.05" Maximum="0.92" />
+                                            <TextBlock x:Name="OpacityValue" Style="{StaticResource ValueText}" Margin="12,0,0,0" />
+                                        </StackPanel>
+                                    </Grid>
 
-                            <Border Height="1" Background="#14FFFFFF" Margin="0,12" />
+                                    <Border Height="1" Background="#14FFFFFF" Margin="0,12" />
 
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel>
+                                            <TextBlock Text="玻璃高光" Style="{StaticResource LabelText}" />
+                                            <TextBlock Text="顶部高光 / 内侧倒角 / 底部反光，关掉后是纯透明面板" Style="{StaticResource HintText}" Margin="0,2,0,0" />
+                                        </StackPanel>
+                                        <ToggleButton x:Name="GlassToggle" Grid.Column="1"
+                                                      Style="{StaticResource ToggleSwitch}" />
+                                    </Grid>
+
+                                    <Border Height="1" Background="#14FFFFFF" Margin="0,12" />
+
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel>
+                                            <TextBlock Text="边缘反光" Style="{StaticResource LabelText}" />
+                                            <TextBlock Text="胶囊顶边那道细高光的强度，0 = 完全不显示" Style="{StaticResource HintText}" Margin="0,2,0,0" />
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                            <Slider x:Name="SpecularSlider" Style="{StaticResource FineSlider}" Width="190"
+                                                    Minimum="0" Maximum="1" />
+                                            <TextBlock x:Name="SpecularValue" Style="{StaticResource ValueText}" Margin="12,0,0,0" />
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <Border Height="1" Background="#14FFFFFF" Margin="0,12" />
+
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel>
+                                            <TextBlock Text="底部阴影" Style="{StaticResource LabelText}" />
+                                            <TextBlock Text="胶囊下方的柔和投影，关掉后 Dock 完全平贴桌面" Style="{StaticResource HintText}" Margin="0,2,0,0" />
+                                        </StackPanel>
+                                        <ToggleButton x:Name="ShadowToggle" Grid.Column="1"
+                                                      Style="{StaticResource ToggleSwitch}" />
+                                    </Grid>
+
+                                    <Border Height="1" Background="#14FFFFFF" Margin="0,12" />
+
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel>
+                                            <TextBlock Text="边框粗细" Style="{StaticResource LabelText}" />
+                                            <TextBlock Text="0 = 完全无边框；建议 0.5 – 1.5" Style="{StaticResource HintText}" Margin="0,2,0,0" />
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                            <Slider x:Name="BorderSlider" Style="{StaticResource FineSlider}" Width="190"
+                                                    Minimum="0" Maximum="3" IsSnapToTickEnabled="True" TickFrequency="0.5" />
+                                            <TextBlock x:Name="BorderValue" Style="{StaticResource ValueText}" Margin="12,0,0,0" />
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <Border Height="1" Background="#14FFFFFF" Margin="0,12" />
+
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel>
+                                            <TextBlock Text="玻璃颜色" Style="{StaticResource LabelText}" />
+                                            <TextBlock Text="白底上偏黑就换成浅色；再点已选颜色 = 清底" Style="{StaticResource HintText}" Margin="0,2,0,0" />
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <Button x:Name="TintClear" Tag="__clear__" Width="22" Height="22" Margin="0,0,6,0"
+                                                    Padding="0" BorderThickness="1" BorderBrush="#40FFFFFF" Background="Transparent"
+                                                    Style="{StaticResource TintSwatchButton}" ToolTip="清底（不要底色，直接透出背景）" Click="OnTintSwatchClick">
+                                                <TextBlock Text="∅" FontSize="12" Foreground="#C8FFFFFF" />
+                                            </Button>
+                                            <Button x:Name="TintDark" Tag="#0B0E13" Width="22" Height="22" Margin="0,0,6,0"
+                                                    Padding="0" BorderThickness="1" BorderBrush="#40FFFFFF" Background="#0B0E13"
+                                                    Style="{StaticResource TintSwatchButton}" ToolTip="石墨黑（默认）" Click="OnTintSwatchClick" />
+                                            <Button x:Name="TintGray" Tag="#2F353D" Width="22" Height="22" Margin="0,0,6,0"
+                                                    Padding="0" BorderThickness="1" BorderBrush="#40FFFFFF" Background="#2F353D"
+                                                    Style="{StaticResource TintSwatchButton}" ToolTip="深空灰" Click="OnTintSwatchClick" />
+                                            <Button x:Name="TintSilver" Tag="#C8D2DC" Width="22" Height="22" Margin="0,0,6,0"
+                                                    Padding="0" BorderThickness="1" BorderBrush="#40FFFFFF" Background="#C8D2DC"
+                                                    Style="{StaticResource TintSwatchButton}" ToolTip="冷银（白底推荐）" Click="OnTintSwatchClick" />
+                                            <Button x:Name="TintWhite" Tag="#FFFFFF" Width="22" Height="22" Margin="0,0,6,0"
+                                                    Padding="0" BorderThickness="1" BorderBrush="#40FFFFFF" Background="#FFFFFF"
+                                                    Style="{StaticResource TintSwatchButton}" ToolTip="纯白" Click="OnTintSwatchClick" />
+                                            <Button x:Name="TintBlue" Tag="#7FA8FF" Width="22" Height="22" Margin="0,0,6,0"
+                                                    Padding="0" BorderThickness="1" BorderBrush="#40FFFFFF" Background="#7FA8FF"
+                                                    Style="{StaticResource TintSwatchButton}" ToolTip="冰蓝" Click="OnTintSwatchClick" />
+                                            <Button x:Name="TintViolet" Tag="#B49BFF" Width="22" Height="22" Margin="0,0,10,0"
+                                                    Padding="0" BorderThickness="1" BorderBrush="#40FFFFFF" Background="#B49BFF"
+                                                    Style="{StaticResource TintSwatchButton}" ToolTip="淡紫" Click="OnTintSwatchClick" />
+                                            <TextBox x:Name="TintHexBox" Width="92" Height="26" VerticalContentAlignment="Center"
+                                                     Style="{StaticResource HexTextBox}" ToolTip="自定义颜色：#RRGGBB，回车生效" />
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <TextBlock Style="{StaticResource HintText}" Margin="0,8,0,0"
+                                               Text="底板为「清玻璃」：不模糊、不取壁纸、不做颗粒噪点，只是近乎透明的一层薄雾 + 发丝描边 + 柔和投影。" />
+                                </StackPanel>
+                            </Expander>
+
+                            <Expander Style="{StaticResource SettingsGroup}" Header="拖影">
                                 <StackPanel>
-                                    <TextBlock Text="内边距（左右）" Style="{StaticResource LabelText}" />
-                                    <TextBlock Text="胶囊左右两侧到第一个/最后一个图标的留白" Style="{StaticResource HintText}" Margin="0,2,0,0" />
-                                </StackPanel>
-                                <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                    <Slider x:Name="PaddingXSlider" Style="{StaticResource FineSlider}" Width="190"
-                                            Minimum="0" Maximum="80" IsSnapToTickEnabled="True" TickFrequency="1" />
-                                    <TextBlock x:Name="PaddingXValue" Style="{StaticResource ValueText}" Margin="12,0,0,0" />
-                                </StackPanel>
-                            </Grid>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel>
+                                            <TextBlock Text="图标拖影" Style="{StaticResource LabelText}" />
+                                            <TextBlock Text="图标下方显示一层很淡的倒影（类似 macOS 的反光）" Style="{StaticResource HintText}" Margin="0,2,0,0" />
+                                        </StackPanel>
+                                        <ToggleButton x:Name="ReflectionToggle" Grid.Column="1"
+                                                      Style="{StaticResource ToggleSwitch}" />
+                                    </Grid>
 
-                            <Border Height="1" Background="#14FFFFFF" Margin="0,12" />
+                                    <Border Height="1" Background="#14FFFFFF" Margin="0,12" />
 
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel>
+                                            <TextBlock Text="拖影大小" Style="{StaticResource LabelText}" />
+                                            <TextBlock Text="倒影的高度，0 = 不显示" Style="{StaticResource HintText}" Margin="0,2,0,0" />
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                            <Slider x:Name="ReflectionSizeSlider" Style="{StaticResource FineSlider}" Width="190"
+                                                    Minimum="0" Maximum="1.6" />
+                                            <TextBlock x:Name="ReflectionSizeValue" Style="{StaticResource ValueText}" Margin="12,0,0,0" />
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <Border Height="1" Background="#14FFFFFF" Margin="0,12" />
+
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel>
+                                            <TextBlock Text="拖影透明度" Style="{StaticResource LabelText}" />
+                                            <TextBlock Text="倒影的浓淡，越大越明显" Style="{StaticResource HintText}" Margin="0,2,0,0" />
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                            <Slider x:Name="ReflectionOpacitySlider" Style="{StaticResource FineSlider}" Width="190"
+                                                    Minimum="0" Maximum="0.6" />
+                                            <TextBlock x:Name="ReflectionOpacityValue" Style="{StaticResource ValueText}" Margin="12,0,0,0" />
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <Border Height="1" Background="#14FFFFFF" Margin="0,12" />
+
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel>
+                                            <TextBlock Text="拖影宽度" Style="{StaticResource LabelText}" />
+                                            <TextBlock Text="倒影的横向宽度，100% = 与图标同宽" Style="{StaticResource HintText}" Margin="0,2,0,0" />
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                            <Slider x:Name="ReflectionWidthSlider" Style="{StaticResource FineSlider}" Width="190"
+                                                    Minimum="0.3" Maximum="1.6" />
+                                            <TextBlock x:Name="ReflectionWidthValue" Style="{StaticResource ValueText}" Margin="12,0,0,0" />
+                                        </StackPanel>
+                                    </Grid>
+                                </StackPanel>
+                            </Expander>
+
+                            <Expander Style="{StaticResource SettingsGroup}" Header="交互">
                                 <StackPanel>
-                                    <TextBlock Text="内边距（上下）" Style="{StaticResource LabelText}" />
-                                    <TextBlock Text="图标上下与胶囊边缘的留白" Style="{StaticResource HintText}" Margin="0,2,0,0" />
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel>
+                                            <TextBlock Text="鼠标放大" Style="{StaticResource LabelText}" />
+                                            <TextBlock Text="光标靠近时图标平滑放大" Style="{StaticResource HintText}" Margin="0,2,0,0" />
+                                        </StackPanel>
+                                        <ToggleButton x:Name="MagnifyToggle" Grid.Column="1"
+                                                      Style="{StaticResource ToggleSwitch}" />
+                                    </Grid>
+
+                                    <Grid Margin="0,12,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="放大倍数" Style="{StaticResource LabelText}" />
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                            <Slider x:Name="MagnifySlider" Style="{StaticResource FineSlider}" Width="190"
+                                                    Minimum="1.1" Maximum="1.9" />
+                                            <TextBlock x:Name="MagnifyValue" Style="{StaticResource ValueText}" Margin="12,0,0,0" />
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <Border Height="1" Background="#14FFFFFF" Margin="0,12" />
+
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="名称提示" Style="{StaticResource LabelText}" />
+                                        <ToggleButton x:Name="LabelsToggle" Grid.Column="1" Style="{StaticResource ToggleSwitch}" />
+                                    </Grid>
+
+                                    <Grid Margin="0,12,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="运行状态指示点" Style="{StaticResource LabelText}" />
+                                        <ToggleButton x:Name="IndicatorToggle" Grid.Column="1" Style="{StaticResource ToggleSwitch}" />
+                                    </Grid>
                                 </StackPanel>
-                                <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                    <Slider x:Name="PaddingYSlider" Style="{StaticResource FineSlider}" Width="190"
-                                            Minimum="0" Maximum="60" IsSnapToTickEnabled="True" TickFrequency="1" />
-                                    <TextBlock x:Name="PaddingYValue" Style="{StaticResource ValueText}" Margin="12,0,0,0" />
-                                </StackPanel>
-                            </Grid>
-
-                            <Border Height="1" Background="#14FFFFFF" Margin="0,12" />
-
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <StackPanel>
-                                    <TextBlock Text="背景透明度" Style="{StaticResource LabelText}" />
-                                    <TextBlock Text="越低越接近全透明，建议 20% – 35%" Style="{StaticResource HintText}" Margin="0,2,0,0" />
-                                </StackPanel>
-                                <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                    <Slider x:Name="OpacitySlider" Style="{StaticResource FineSlider}" Width="190"
-                                            Minimum="0.05" Maximum="0.92" />
-                                    <TextBlock x:Name="OpacityValue" Style="{StaticResource ValueText}" Margin="12,0,0,0" />
-                                </StackPanel>
-                            </Grid>
-
-                            <Border Height="1" Background="#14FFFFFF" Margin="0,12" />
-
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <StackPanel>
-                                    <TextBlock Text="玻璃高光" Style="{StaticResource LabelText}" />
-                                    <TextBlock Text="顶部高光 / 内侧倒角 / 底部反光，关掉后是纯透明面板" Style="{StaticResource HintText}" Margin="0,2,0,0" />
-                                </StackPanel>
-                                <ToggleButton x:Name="GlassToggle" Grid.Column="1"
-                                              Style="{StaticResource ToggleSwitch}" />
-                            </Grid>
-
-                            <Border Height="1" Background="#14FFFFFF" Margin="0,12" />
-
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <StackPanel>
-                                    <TextBlock Text="边缘反光" Style="{StaticResource LabelText}" />
-                                    <TextBlock Text="胶囊顶边那道细高光的强度，0 = 完全不显示" Style="{StaticResource HintText}" Margin="0,2,0,0" />
-                                </StackPanel>
-                                <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                    <Slider x:Name="SpecularSlider" Style="{StaticResource FineSlider}" Width="190"
-                                            Minimum="0" Maximum="1" />
-                                    <TextBlock x:Name="SpecularValue" Style="{StaticResource ValueText}" Margin="12,0,0,0" />
-                                </StackPanel>
-                            </Grid>
-
-                            <Border Height="1" Background="#14FFFFFF" Margin="0,12" />
-
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <StackPanel>
-                                    <TextBlock Text="底部阴影" Style="{StaticResource LabelText}" />
-                                    <TextBlock Text="胶囊下方的柔和投影，关掉后 Dock 完全平贴桌面" Style="{StaticResource HintText}" Margin="0,2,0,0" />
-                                </StackPanel>
-                                <ToggleButton x:Name="ShadowToggle" Grid.Column="1"
-                                              Style="{StaticResource ToggleSwitch}" />
-                            </Grid>
-
-                            <Border Height="1" Background="#14FFFFFF" Margin="0,12" />
-
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <StackPanel>
-                                    <TextBlock Text="图标拖影" Style="{StaticResource LabelText}" />
-                                    <TextBlock Text="图标下方显示一层很淡的倒影（类似 macOS 的反光）" Style="{StaticResource HintText}" Margin="0,2,0,0" />
-                                </StackPanel>
-                                <ToggleButton x:Name="ReflectionToggle" Grid.Column="1"
-                                              Style="{StaticResource ToggleSwitch}" />
-                            </Grid>
-
-                            <Border Height="1" Background="#14FFFFFF" Margin="0,12" />
-
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <StackPanel>
-                                    <TextBlock Text="拖影大小" Style="{StaticResource LabelText}" />
-                                    <TextBlock Text="图标下方倒影的高度，0 = 不显示" Style="{StaticResource HintText}" Margin="0,2,0,0" />
-                                </StackPanel>
-                                <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                    <Slider x:Name="ReflectionSizeSlider" Style="{StaticResource FineSlider}" Width="190"
-                                            Minimum="0" Maximum="1.6" />
-                                    <TextBlock x:Name="ReflectionSizeValue" Style="{StaticResource ValueText}" Margin="12,0,0,0" />
-                                </StackPanel>
-                            </Grid>
-
-                            <Border Height="1" Background="#14FFFFFF" Margin="0,12" />
-
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <StackPanel>
-                                    <TextBlock Text="玻璃颜色" Style="{StaticResource LabelText}" />
-                                    <TextBlock Text="白底上偏黑就换成浅色；深色 = 烟熏玻璃，浅色 = 清透玻璃" Style="{StaticResource HintText}" Margin="0,2,0,0" />
-                                </StackPanel>
-                                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                                    <Button x:Name="TintClear" Tag="__clear__" Width="22" Height="22" Margin="0,0,6,0"
-                                            Padding="0" BorderThickness="1" BorderBrush="#40FFFFFF" Background="Transparent"
-                                            Style="{StaticResource TintSwatchButton}" ToolTip="清底（不要底色，直接透出背景）" Click="OnTintSwatchClick">
-                                        <TextBlock Text="∅" FontSize="12" Foreground="#C8FFFFFF" />
-                                    </Button>
-                                    <Button x:Name="TintDark" Tag="#0B0E13" Width="22" Height="22" Margin="0,0,6,0"
-                                            Padding="0" BorderThickness="1" BorderBrush="#40FFFFFF" Background="#0B0E13"
-                                            Style="{StaticResource TintSwatchButton}" ToolTip="石墨黑（默认）" Click="OnTintSwatchClick" />
-                                    <Button x:Name="TintGray" Tag="#2F353D" Width="22" Height="22" Margin="0,0,6,0"
-                                            Padding="0" BorderThickness="1" BorderBrush="#40FFFFFF" Background="#2F353D"
-                                            Style="{StaticResource TintSwatchButton}" ToolTip="深空灰" Click="OnTintSwatchClick" />
-                                    <Button x:Name="TintSilver" Tag="#C8D2DC" Width="22" Height="22" Margin="0,0,6,0"
-                                            Padding="0" BorderThickness="1" BorderBrush="#40FFFFFF" Background="#C8D2DC"
-                                            Style="{StaticResource TintSwatchButton}" ToolTip="冷银（白底推荐）" Click="OnTintSwatchClick" />
-                                    <Button x:Name="TintWhite" Tag="#FFFFFF" Width="22" Height="22" Margin="0,0,6,0"
-                                            Padding="0" BorderThickness="1" BorderBrush="#40FFFFFF" Background="#FFFFFF"
-                                            Style="{StaticResource TintSwatchButton}" ToolTip="纯白" Click="OnTintSwatchClick" />
-                                    <Button x:Name="TintBlue" Tag="#7FA8FF" Width="22" Height="22" Margin="0,0,6,0"
-                                            Padding="0" BorderThickness="1" BorderBrush="#40FFFFFF" Background="#7FA8FF"
-                                            Style="{StaticResource TintSwatchButton}" ToolTip="冰蓝" Click="OnTintSwatchClick" />
-                                    <Button x:Name="TintViolet" Tag="#B49BFF" Width="22" Height="22" Margin="0,0,10,0"
-                                            Padding="0" BorderThickness="1" BorderBrush="#40FFFFFF" Background="#B49BFF"
-                                            Style="{StaticResource TintSwatchButton}" ToolTip="淡紫" Click="OnTintSwatchClick" />
-                                    <TextBox x:Name="TintHexBox" Width="92" Height="26" VerticalContentAlignment="Center"
-                                             Style="{StaticResource HexTextBox}" ToolTip="自定义颜色：#RRGGBB，回车生效" />
-                                </StackPanel>
-                            </Grid>
-
-                            <TextBlock Style="{StaticResource HintText}" Margin="0,8,0,0"
-                                       Text="底板为「清玻璃」：不模糊、不取壁纸、不做颗粒噪点，只是近乎透明的一层薄雾 + 发丝描边 + 柔和投影，Dock 后面是什么就直接透出什么。" />                            <Border Height="1" Background="#14FFFFFF" Margin="0,12" />
-
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <StackPanel>
-                                    <TextBlock Text="边框粗细" Style="{StaticResource LabelText}" />
-                                    <TextBlock Text="0 = 完全无边框；建议 0.5 – 1.5" Style="{StaticResource HintText}" Margin="0,2,0,0" />
-                                </StackPanel>
-                                <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                    <Slider x:Name="BorderSlider" Style="{StaticResource FineSlider}" Width="190"
-                                            Minimum="0" Maximum="3" IsSnapToTickEnabled="True" TickFrequency="0.5" />
-                                    <TextBlock x:Name="BorderValue" Style="{StaticResource ValueText}" Margin="12,0,0,0" />
-                                </StackPanel>
-                            </Grid>
-
-                            <Border Height="1" Background="#14FFFFFF" Margin="0,12" />
-
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <StackPanel>
-                                    <TextBlock Text="鼠标放大" Style="{StaticResource LabelText}" />
-                                    <TextBlock Text="光标靠近时图标平滑放大" Style="{StaticResource HintText}" Margin="0,2,0,0" />
-                                </StackPanel>
-                                <ToggleButton x:Name="MagnifyToggle" Grid.Column="1"
-                                              Style="{StaticResource ToggleSwitch}" />
-                            </Grid>
-
-                            <Grid Margin="0,12,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Text="放大倍数" Style="{StaticResource LabelText}" />
-                                <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                    <Slider x:Name="MagnifySlider" Style="{StaticResource FineSlider}" Width="190"
-                                            Minimum="1.1" Maximum="1.9" />
-                                    <TextBlock x:Name="MagnifyValue" Style="{StaticResource ValueText}" Margin="12,0,0,0" />
-                                </StackPanel>
-                            </Grid>
-
-                            <Border Height="1" Background="#14FFFFFF" Margin="0,12" />
-
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Text="名称提示" Style="{StaticResource LabelText}" />
-                                <ToggleButton x:Name="LabelsToggle" Grid.Column="1" Style="{StaticResource ToggleSwitch}" />
-                            </Grid>
-
-                            <Grid Margin="0,12,0,0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Text="运行状态指示点" Style="{StaticResource LabelText}" />
-                                <ToggleButton x:Name="IndicatorToggle" Grid.Column="1" Style="{StaticResource ToggleSwitch}" />
-                            </Grid>
+                            </Expander>
                         </StackPanel>
+
                     </Border>
 
                     <TextBlock Text="行为" Style="{StaticResource SectionText}" />
