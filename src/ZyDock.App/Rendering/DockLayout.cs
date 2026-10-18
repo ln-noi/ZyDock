@@ -79,12 +79,15 @@ internal sealed class DockLayout
 
         var plateWidth = count * iconSize + (count - 1) * spacing + paddingX * 2;
 
-        // The icon and its reflection form one visual block: the capsule grows by the reflection
-        // height, and the block sits centred in it, so the padding above the icons and below the
-        // reflection stays identical instead of the reflection crowding the bottom edge.
+        // The icon and its reflection form one visual block, but the reflection is a faint fading
+        // tail and carries far less weight than the icon above it: equal padding on both sides
+        // makes the capsule look top-heavy. So once a reflection exists the bottom padding shrinks
+        // and the block settles lower, with the tail dissolving towards the bottom edge.
         reflectionHeight = Math.Max(0, reflectionHeight);
-        var blockHeight = iconSize + (reflectionHeight > 0.5 ? ReflectionGap + reflectionHeight : 0);
-        var plateHeight = blockHeight + paddingY * 2;
+        var hasReflection = reflectionHeight > 0.5;
+        var blockHeight = iconSize + (hasReflection ? ReflectionGap + reflectionHeight : 0);
+        var bottomPadding = hasReflection ? Math.Max(3.0, paddingY * 0.35) : paddingY;
+        var plateHeight = blockHeight + paddingY + bottomPadding;
         var radius = plateHeight / 2.0;
 
         var maxExtra = magnify ? iconSize * (magnifyFactor - 1.0) : 0.0;
