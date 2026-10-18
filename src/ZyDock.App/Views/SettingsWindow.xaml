@@ -330,23 +330,6 @@
                                         </StackPanel>
                                     </Grid>
 
-                                    <Border Height="1" Background="#14FFFFFF" Margin="0,12" />
-
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
-                                        <StackPanel>
-                                            <TextBlock Text="拖影宽度" Style="{StaticResource LabelText}" />
-                                            <TextBlock Text="倒影的横向宽度，100% = 与图标同宽" Style="{StaticResource HintText}" Margin="0,2,0,0" />
-                                        </StackPanel>
-                                        <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                            <Slider x:Name="ReflectionWidthSlider" Style="{StaticResource FineSlider}" Width="190"
-                                                    Minimum="0.3" Maximum="1.6" />
-                                            <TextBlock x:Name="ReflectionWidthValue" Style="{StaticResource ValueText}" Margin="12,0,0,0" />
-                                        </StackPanel>
-                                    </Grid>
                                 </StackPanel>
                             </Expander>
 

@@ -284,7 +284,6 @@ internal int PlateTopPixels
                     image.Source,
                     _settings.IconSize,
                     _settings.ReflectionSize,
-                    _settings.ReflectionWidth,
                     _settings.ReflectionOpacity);
                 if (reflection is not null)
                 {
@@ -483,7 +482,6 @@ internal int PlateTopPixels
         ImageSource? source,
         double iconSize,
         double sizeMultiplier,
-        double widthMultiplier,
         double opacity)
     {
         // Base height is 30% of the icon; the "拖影大小" slider scales it (0 = off, 1.6 = large).
@@ -505,34 +503,37 @@ internal int PlateTopPixels
         var reflection = new Image
         {
             Source = source,
-            // Fill, not Uniform: a square icon inside a Uniform box is limited by the
-            // shorter side, so widening the box did nothing. Fill lets the width slider
-            // stretch the reflection horizontally the way a real reflection behaves.
-            Stretch = Stretch.Fill,
+
+            // Uniform keeps the icon's own aspect ratio: the reflection is a scaled-down copy of
+            // the icon, never a squashed one. The box is as wide as the icon cell and as tall as
+            // the chosen reflection height, so Uniform renders it at height x height, centred.
+            Stretch = Stretch.Uniform,
             IsHitTestVisible = false,
-            Width = iconSize * Math.Clamp(widthMultiplier, 0.3, 1.6),
+            Width = iconSize,
             Height = height,
             RenderTransformOrigin = new Point(0.5, 0.5),
             RenderTransform = new ScaleTransform(1, -1),
             Opacity = Math.Clamp(opacity, 0, 0.6),
+
+            // Progressive fade: the element is flipped, so its "end" is the edge that touches the
+            // icon. Keep that edge strongest and let the far edge dissolve completely.
             OpacityMask = new LinearGradientBrush
             {
                 StartPoint = new Point(0.5, 0),
                 EndPoint = new Point(0.5, 1),
                 GradientStops =
                 {
-                    // The element is flipped vertically, so its bottom edge is the one that
-                    // touches the icon: keep the mask strong there and fade it away.
                     new GradientStop(Color.FromArgb(0, 255, 255, 255), 0),
-                    new GradientStop(Color.FromArgb(240, 255, 255, 255), 1),
+                    new GradientStop(Color.FromArgb(120, 255, 255, 255), 0.45),
+                    new GradientStop(Color.FromArgb(225, 255, 255, 255), 0.85),
+                    new GradientStop(Color.FromArgb(245, 255, 255, 255), 1),
                 },
             },
         };
 
-        RenderOptions.SetBitmapScalingMode(reflection, BitmapScalingMode.LowQuality);
+        RenderOptions.SetBitmapScalingMode(reflection, BitmapScalingMode.HighQuality);
 
-        // Centre the (possibly narrower) reflection under the icon.
-        Canvas.SetLeft(reflection, (iconSize - reflection.Width) / 2);
+        Canvas.SetLeft(reflection, 0);
         Canvas.SetTop(reflection, iconSize + 2);
         layer.Children.Add(reflection);
 

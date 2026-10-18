@@ -155,17 +155,6 @@ public partial class SettingsWindow : Window
             ScheduleApply();
         };
 
-        ReflectionWidthSlider.ValueChanged += (_, _) =>
-        {
-            if (_suppress)
-            {
-                return;
-            }
-
-            _settings.ReflectionWidth = Math.Round(ReflectionWidthSlider.Value, 2);
-            ReflectionWidthValue.Text = $"{_settings.ReflectionWidth * 100:0}%";
-            ScheduleApply();
-        };
 
         ReflectionSizeSlider.ValueChanged += (_, _) =>
         {
@@ -399,8 +388,6 @@ public partial class SettingsWindow : Window
             ReflectionSizeSlider.Value = settings.ReflectionSize;
             ReflectionOpacitySlider.Value = settings.ReflectionOpacity;
             ReflectionOpacityValue.Text = settings.ReflectionOpacity <= 0.005 ? "不可见" : $"{settings.ReflectionOpacity * 100:0}%";
-            ReflectionWidthSlider.Value = settings.ReflectionWidth;
-            ReflectionWidthValue.Text = $"{settings.ReflectionWidth * 100:0}%";
             ReflectionSizeValue.Text = settings.ReflectionSize <= 0.01 ? "不显示" : $"{settings.ReflectionSize * 100:0}%";
             SpecularValue.Text = settings.SpecularStrength <= 0.01 ? "关闭" : $"{settings.SpecularStrength * 100:0}%";
             PaddingXSlider.Value = settings.PaddingHorizontal;

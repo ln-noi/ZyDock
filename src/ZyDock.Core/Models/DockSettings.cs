@@ -41,9 +41,6 @@ public sealed class DockSettings
     /// <summary>Opacity of the icon reflection (0 = invisible, 0.2 = default).</summary>
     public double ReflectionOpacity { get; set; } = 0.20;
 
-    /// <summary>Width of the reflection as a multiplier of the icon width (1 = same width).</summary>
-    public double ReflectionWidth { get; set; } = 1.0;
-
     /// <summary>Size of the icon reflection as a multiplier of the base height (0 = hidden, 1 = default).</summary>
     public double ReflectionSize { get; set; } = 1.0;
 
@@ -109,7 +106,7 @@ public sealed class DockSettings
             TintColor = TintColor,
             ShadowEnabled = ShadowEnabled,
             ReflectionOpacity = ReflectionOpacity,
-            ReflectionWidth = ReflectionWidth,
+
             ReflectionSize = ReflectionSize,
             IconReflection = IconReflection,
             PaddingHorizontal = PaddingHorizontal,
@@ -139,7 +136,7 @@ public sealed class DockSettings
         SpecularStrength = Math.Round(Clamp(SpecularStrength, 0, 1), 2);
         ReflectionSize = Math.Round(Clamp(ReflectionSize, 0, 1.6), 2);
         ReflectionOpacity = Math.Round(Clamp(ReflectionOpacity, 0, 0.6), 2);
-        ReflectionWidth = Math.Round(Clamp(ReflectionWidth, 0.3, 1.6), 2);
+
         BorderThickness = Math.Round(Clamp(BorderThickness, 0, 3), 2);
         TintColor = NormalizeColor(TintColor);
         PaddingHorizontal = Math.Round(Clamp(PaddingHorizontal, 0, 80), 0);
