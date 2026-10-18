@@ -280,7 +280,11 @@ internal int PlateTopPixels
             // Faint mirrored reflection under the icon ("拖影"), off by default.
             if (_settings.IconReflection)
             {
-                host.Children.Add(CreateReflection(image.Source, _settings.IconSize));
+                var reflection = CreateReflection(image.Source, _settings.IconSize, _settings.ReflectionSize);
+                if (reflection is not null)
+                {
+                    host.Children.Add(reflection);
+                }
             }
 
             ItemLayer.Children.Add(host);
@@ -470,9 +474,14 @@ internal int PlateTopPixels
     /// Builds a mirrored, fading copy of the icon that sits just below it ("拖影"/reflection).
     /// It lives inside the icon host, so it follows the magnification transform for free.
     /// </summary>
-    private static UIElement CreateReflection(ImageSource? source, double iconSize)
+    private static UIElement? CreateReflection(ImageSource? source, double iconSize, double sizeMultiplier)
     {
-        var height = Math.Max(6, iconSize * 0.30);
+        // Base height is 30% of the icon; the "拖影大小" slider scales it (0 = off, 1.6 = large).
+        var height = iconSize * 0.30 * Math.Clamp(sizeMultiplier, 0, 1.6);
+        if (height < 2)
+        {
+            return null;
+        }
 
         // A Canvas measures its children with infinite space, so the reflection can hang below
         // the icon cell without being squeezed to zero height (a Grid would do exactly that).

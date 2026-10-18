@@ -38,6 +38,9 @@ public sealed class DockSettings
     /// <summary>Colour of the glass wash, "#RRGGBB". Dark = smoked glass, light = clear glass.</summary>
     public string TintColor { get; set; } = DefaultTint;
 
+    /// <summary>Size of the icon reflection as a multiplier of the base height (0 = hidden, 1 = default).</summary>
+    public double ReflectionSize { get; set; } = 1.0;
+
     /// <summary>Draw a faint mirrored copy of each icon just below it ("拖影").</summary>
     public bool IconReflection { get; set; }
 
@@ -99,6 +102,7 @@ public sealed class DockSettings
             TintEnabled = TintEnabled,
             TintColor = TintColor,
             ShadowEnabled = ShadowEnabled,
+            ReflectionSize = ReflectionSize,
             IconReflection = IconReflection,
             PaddingHorizontal = PaddingHorizontal,
             PaddingVertical = PaddingVertical,
@@ -125,6 +129,7 @@ public sealed class DockSettings
         EdgeOffset = Math.Round(Clamp(EdgeOffset, 0, 64), 1);
         MagnifyFactor = Math.Round(Clamp(MagnifyFactor, 1.0, 1.9), 2);
         SpecularStrength = Math.Round(Clamp(SpecularStrength, 0, 1), 2);
+        ReflectionSize = Math.Round(Clamp(ReflectionSize, 0, 1.6), 2);
         BorderThickness = Math.Round(Clamp(BorderThickness, 0, 3), 2);
         TintColor = NormalizeColor(TintColor);
         PaddingHorizontal = Math.Round(Clamp(PaddingHorizontal, 0, 80), 0);

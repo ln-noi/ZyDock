@@ -234,6 +234,24 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <StackPanel>
+                                    <TextBlock Text="拖影大小" Style="{StaticResource LabelText}" />
+                                    <TextBlock Text="图标下方倒影的高度，0 = 不显示" Style="{StaticResource HintText}" Margin="0,2,0,0" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                    <Slider x:Name="ReflectionSizeSlider" Style="{StaticResource FineSlider}" Width="190"
+                                            Minimum="0" Maximum="1.6" />
+                                    <TextBlock x:Name="ReflectionSizeValue" Style="{StaticResource ValueText}" Margin="12,0,0,0" />
+                                </StackPanel>
+                            </Grid>
+
+                            <Border Height="1" Background="#14FFFFFF" Margin="0,12" />
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
                                     <TextBlock Text="玻璃颜色" Style="{StaticResource LabelText}" />
                                     <TextBlock Text="白底上偏黑就换成浅色；深色 = 烟熏玻璃，浅色 = 清透玻璃" Style="{StaticResource HintText}" Margin="0,2,0,0" />
                                 </StackPanel>
