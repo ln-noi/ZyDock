@@ -505,7 +505,10 @@ internal int PlateTopPixels
         var reflection = new Image
         {
             Source = source,
-            Stretch = Stretch.Uniform,
+            // Fill, not Uniform: a square icon inside a Uniform box is limited by the
+            // shorter side, so widening the box did nothing. Fill lets the width slider
+            // stretch the reflection horizontally the way a real reflection behaves.
+            Stretch = Stretch.Fill,
             IsHitTestVisible = false,
             Width = iconSize * Math.Clamp(widthMultiplier, 0.3, 1.6),
             Height = height,

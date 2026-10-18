@@ -5,6 +5,17 @@
 
 ---
 
+## 第二十轮 · 修两个自测漏掉的 bug
+
+| 反馈 | 原因 | 修复 |
+| --- | --- | --- |
+| 拖影宽度只在 50% 以下有效 | 倒影 `Image` 用的是 `Stretch="Uniform"`：正方形图标放进"宽 × 矮"的框里，Uniform 会取**较短边**等比缩放，所以宽度一旦超过高度比例（约 30%），再加宽只是加了空白，画出来的内容不变 | 改成 `Stretch="Fill"`，宽度滑块才能真正横向拉伸/压缩倒影 |
+| 分组折叠/展开没反应 | 模板里的 `ToggleButton` 只是被 `IsExpanded` 的单向 Trigger 设置了 `IsChecked`，**点击它并不会反过来改变 `IsExpanded`** | 改成双向绑定 `IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"`，并删掉那条单向 Setter |
+
+实测：30% 宽度 → 细窄倒影；160% 宽度 → 明显拉宽（两张截图对比确认）；点击「图标」标题 → 该组收起、其余组不受影响。
+
+---
+
 ## 第十九轮 · 拖影透明度 / 宽度 + 设置界面分组
 
 **新增两个拖影参数**（`ReflectionOpacity`、`ReflectionWidth`）：
