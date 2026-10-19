@@ -84,12 +84,11 @@ Get-FileHash .\ZyDock-1.0.0-single-file.exe -Algorithm SHA256
 
 ## ☕ 赞赏
 
-如果它让你的桌面顺手了一点，可以请作者喝杯咖啡：
+如果它让你的桌面顺手了一点，欢迎扫码请作者喝杯咖啡：
 
-<!-- 把你的赞赏码 / 收款码保存为 docs/reward-qr.png 即可自动显示在这里 -->
-<img src="docs/reward-qr.png" alt="赞赏二维码" width="260" />
-
-> 二维码图片位置：`docs/reward-qr.png`（替换同名文件即可）。
+<p align="center">
+  <img src="docs/reward-qr.png" alt="ZyDock 赞赏码" width="240" />
+</p>
 
 ---
 
