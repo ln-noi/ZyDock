@@ -78,7 +78,7 @@
 | 平台不允许传 exe（网盘、群文件审核） | ② `ZyDock-1.0.0-single-file.zip` |
 | 想启动最快、不想依赖 `%TEMP%` | ③ `ZyDock-1.0.0-folder.zip`（解压后整个文件夹一起用） |
 
-> 本仓库只放源码（约 1.5 MB）；程序体积大，全部走 **Releases** 下载，不占仓库。
+> 本仓库只放源码（约 1.5 MB）；程序体积大，全部走 **发布** 下载，不占仓库。
 
 ### 首次运行
 
@@ -171,29 +171,7 @@ git tag v1.0.0
 
 > 自动隐藏开启时，把鼠标移到屏幕**底边**（Dock 宽度范围内）即可唤回。
 
----
 
-## 🔧 技术要点
-
-**分层窗口 + 自实现命中测试**
-`WindowStyle=None + AllowsTransparency=true` 得到逐像素 alpha 的 layered window，再叠加 `WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE` 使其不进 Alt+Tab、不抢焦点。`WM_NCHITTEST` 把屏幕坐标换算成窗口 DIP，只有「圆角胶囊 / 放大后的图标矩形 / 气泡」返回 `HTCLIENT`，其余一律 `HTTRANSPARENT`，所以阴影和顶部预留空间都不会吞点击。
-
-**逐帧驱动、时间相关的动效**
-不用 `BeginAnimation`（互相打断会跳变）。动画由 `CompositionTarget.Rendering`（跟随屏幕 vsync）驱动，每个图标做指数平滑 `current += (target - current) * (1 - e^(-dt/τ))`（τ ≈ 52 ms），目标值由距离决定 `1 + (factor-1) · e^(-(d/σ)²)`（σ ≈ 1.55 × 图标尺寸）。全部收敛后立刻摘掉渲染回调 —— **静止时零帧开销**；动效与刷新率无关（本机 160 Hz 面板实测帧间隔 8–10 ms）。
-
-**图标管线**
-普通程序 / 文件夹 / shell 位置走 `IShellItemImageFactory.GetImage(256)`；UWP 应用的 item 图像工厂只返回空白文档图标，因此 `PackagedIconResolver` 走 `AUMID → HKCU AppModel Repository → AppxManifest.xml → Square44x44Logo(targetsize-256_altform-unplated)` 取真实 logo；全都拿不到时才退回内置矢量图。
-
-**底板一次性渲染**
-`GlassRenderer` 把薄雾渐变、顶部高光、内倒角、底部反光、柔和投影一次性画进冻结的 `RenderTargetBitmap`，只有尺寸/设置变化才重建。悬停动画只改图标 `ScaleTransform`，按帧成本只有几次缓存位图缩放。
-
-**DPI / 多屏 / 任务栏**
-manifest 声明 PerMonitorV2；几何按目标屏幕物理像素计算，再用 `GetWindowRect` 回读校正；`DpiChanged` 与 `DisplaySettingsChanged` 都会重排。任务栏高度不信任 `WorkArea`（自动隐藏生效后它会报全屏），而是直接测量 `Shell_TrayWnd` 窗口矩形。
-
-**健壮性**
-全局异常（`DispatcherUnhandledException` / `AppDomain.UnhandledException` / `UnobservedTaskException`）兜底写日志；配置原子写（临时文件 + `File.Replace`），损坏自动备份并回退默认；退出时释放托盘、停所有定时器、恢复任务栏状态。
-
----
 
 ## 🔒 安全与隐私
 
@@ -235,15 +213,6 @@ ZyDock/
 
 ---
 
-## ⚠️ 已知限制
-
-1. Dock 固定贴屏幕底边，**顶部 / 侧边布局未实现**。
-2. 多显示器选择逻辑已实现，但开发机只有一块屏，**跨屏与跨屏 DPI 迁移未实测**。
-3. 未做代码签名，SmartScreen 会提示未知发布者。
-4. 单帧渲染上限约 100–135 fps：WPF 逐像素 alpha 分层窗口的固定开销，与图标数量无关；要锁满 160 fps 需改用 DirectComposition/D3D 合成。
-5. 系统亚克力（DWM Acrylic）实测会在分层窗口上产生整窗矩形灰块，因此**未提供**。
-
----
 
 ## 📝 变更记录
 
